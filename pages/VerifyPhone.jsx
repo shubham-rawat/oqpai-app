@@ -7,22 +7,26 @@ import {
   View,
   TextInput,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import Button from "../components/Button";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userDataSlice";
 // import OTPInput from "../components/OTPInput";
 
 export default function VerifyPhone({ navigation }) {
   const [otp, setOtp] = useState("");
+  const dispatch = useDispatch();
 
   const handleVerifyOtp = (otp) => {
     Alert.alert("OTP", otp);
+    dispatch(setUserData({ email, name: "Name" }));
     navigation.navigate("MainPage");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
-        <MaterialIcons name="keyboard-arrow-left" color="#000" size={24} />
+        <AntDesign name="arrowleft" size={24} color="black" />
         <Text style={styles.title}>Verify Phone</Text>
       </View>
       <View style={styles.bodyContainer}>

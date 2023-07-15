@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import VerifyPhone from "./pages/VerifyPhone";
 import MainLayout from "./layouts/MainLayout";
+import OrderSummary from "./pages/OrderSummary";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,11 +43,18 @@ function App() {
               />
             </>
           ) : (
-            <Stack.Screen
-              name="MainPage"
-              component={MainLayout}
-              options={{ animation: "slide_from_right" }}
-            />
+            <>
+              <Stack.Screen
+                name="MainPage"
+                component={MainLayout}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="OrderSummary"
+                component={OrderSummary}
+                options={{ animation: "slide_from_right" }}
+              />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>

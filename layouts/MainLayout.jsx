@@ -1,6 +1,5 @@
 import { SafeAreaView, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
 // pages
 import Profile from "../pages/Profile";
@@ -8,10 +7,17 @@ import History from "../pages/History";
 import Header from "../components/Header";
 import Home from "../pages/Home";
 
+// tab icons
+import HomeIcon from "../assets/home_icon.svg";
+import HomeIconFocus from "../assets/home_icon_focus.svg";
+import HistoryIcon from "../assets/history_icon.svg";
+import HistoryIconFocus from "../assets/history_icon_focus.svg";
+import ProfileIcon from "../assets/profile_icon.svg";
+import ProfileIconFocus from "../assets/profile_icon_focus.svg";
+
 const Tab = createBottomTabNavigator();
 
 export default function MainLayout({ navigation }) {
-  // navigation.navigate("signupPage")
   return (
     <SafeAreaView
       style={{ width: "100%", height: "100%", backgroundColor: "#FCFBFC" }}
@@ -19,20 +25,26 @@ export default function MainLayout({ navigation }) {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
+            let iconSize = 35;
             if (route.name === "Home") {
-              iconName = focused ? "ios-home" : "ios-home-outline";
+              return focused ? (
+                <HomeIconFocus width={iconSize} height={iconSize} />
+              ) : (
+                <HomeIcon width={iconSize} height={iconSize} />
+              );
             } else if (route.name === "History") {
-              iconName = focused
-                ? "ios-stats-chart"
-                : "ios-stats-chart-outline";
+              return focused ? (
+                <HistoryIconFocus width={iconSize} height={iconSize} />
+              ) : (
+                <HistoryIcon width={iconSize} height={iconSize} />
+              );
             } else if (route.name === "Profile") {
-              iconName = focused ? "ios-person" : "ios-person-outline";
+              return focused ? (
+                <ProfileIconFocus width={iconSize} height={iconSize} />
+              ) : (
+                <ProfileIcon width={iconSize} height={iconSize} />
+              );
             }
-
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: "#0B6EFD",
           tabBarInactiveTintColor: "#E7E7EF",
@@ -62,51 +74,4 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginBottom: 15,
   },
-  // mainContainer: {
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   width: "100%",
-  //   height: "100%",
-  // },
-  // topContainer: {
-  //   display: "flex",
-  //   flexDirection: "row",
-  //   width: "100%",
-  //   height: "10%",
-  //   borderBottomWidth: 1,
-  //   borderBottomColor: "#0064FF4",
-  //   // justifyContent: "center",
-  //   alignItems: "flex-end",
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 10,
-  // },
-  // middleContainer: {
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   width: "100%",
-  //   height: "80%",
-  // },
-  // bottomContainer: {
-  //   display: "flex",
-  //   flexDirection: "row",
-  //   width: "100%",
-  //   height: "10%",
-  //   borderWidth: 1,
-  //   borderTopLeftRadius: 18,
-  //   borderTopRightRadius: 18,
-  //   borderTopColor: "#0064FF4",
-  // },
-  // locationForm: {
-  //   display: "flex",
-  //   alignItems: "stretch",
-  //   borderWidth: 1,
-  //   borderRadius: 18,
-  //   margin: 20,
-  // },
-  // locationInput: {
-  //   borderWidth: 0,
-  //   padding: 10,
-  //   fontSize: 18,
-  //   height: 60,
-  // },
 });

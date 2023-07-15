@@ -11,12 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "usesNonExemptEncryption": false,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow OQPAI App to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow OQPAI App to save photos."

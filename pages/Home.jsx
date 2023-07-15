@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import OrderSummary from "./OrderSummary";
 import LuggageLocation from "./LuggageLocation";
 import BagsPage from "./BagsPage";
 
@@ -19,11 +18,6 @@ export default function Home() {
       <Stack.Screen
         name="Bags"
         component={BagsPage}
-        options={{ animation: "fade" }}
-      />
-      <Stack.Screen
-        name="OrderSummary"
-        component={OrderSummary}
         options={{ animation: "fade" }}
       />
     </Stack.Navigator>
