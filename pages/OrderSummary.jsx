@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View, SafeAreaView, Pressable } from "react-native";
+import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
+import { getTimeDifferenceInHours } from "../utils/DateTimeUtils";
+// custom compnents and icons
 import Button from "../components/Button";
 import DailyPackIcon from "../assets/daily_pack_logo.svg";
 import PickupIcon from "../assets/pickup_location.svg";
@@ -7,6 +10,7 @@ import DropIcon from "../assets/drop_location.svg";
 import ClockIcon from "../assets/clock.svg";
 
 export default function OrderSummary({ navigation }) {
+  const data = useSelector((state) => state.userData);
   const proceedToPay = () => {
     console.log("Proceed");
   };
@@ -20,14 +24,17 @@ export default function OrderSummary({ navigation }) {
         <Text style={styles.title}>Order Summary</Text>
       </View>
       <View style={styles.bodyContainer}>
-        <BagDetailsComponent numberOfBags={4} packageName={"Daily Package"} />
+        <BagDetailsComponent
+          numberOfBags={data?.bags}
+          packageName={"Daily Package"}
+        />
         <LocationComponent
-          pickupLocation={"Address 1"}
-          dropLocation={"Address 2"}
+          pickupLocation={data?.location.pickup}
+          dropLocation={data?.location.drop}
         />
         <HoldingTimeComponent
-          pickDateTime={new Date("2023-07-15T13:00:00")}
-          dropDateTime={new Date("2023-07-15T16:30:00")}
+          pickDateTime={data?.dateTime.pickup}
+          dropDateTime={data?.dateTime.drop}
         />
         <BillingComponent />
         <View
@@ -99,12 +106,7 @@ function LocationComponent({ pickupLocation, dropLocation }) {
 
 // component to display pick and drop date and time
 function HoldingTimeComponent({ pickDateTime, dropDateTime }) {
-  const holdingTime = (dt2, dt1) => {
-    let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    diff /= 60 * 60;
-    return Math.abs(Math.round(diff));
-  };
-
+  const holdingTime = getTimeDifferenceInHours(pickDateTime, dropDateTime);
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.holdingTimeHeadingContainer}>
@@ -112,7 +114,7 @@ function HoldingTimeComponent({ pickDateTime, dropDateTime }) {
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <ClockIcon width={30} height={30} />
           <Text style={{ fontSize: 18, fontWeight: "400", color: "#3C3C3C" }}>
-            {holdingTime(pickDateTime, dropDateTime)} hours
+            {holdingTime} hours
           </Text>
         </View>
       </View>

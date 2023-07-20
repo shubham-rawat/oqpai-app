@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import Button from "./Button";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function TakePicture({ photo, setPhoto, pictureSaved }) {
   const [permissions, setPermissions] = useState({ camera: null, media: null });
@@ -58,8 +58,12 @@ export default function TakePicture({ photo, setPhoto, pictureSaved }) {
           source={{ uri: "data:image/jpg;base64," + photo.base64 }}
         />
         <View style={styles.actionButtons}>
-          <Button label={"retake"} onPress={retakePicture} height={60} />
-          <Button label={"save"} onPress={savePicture} height={60} />
+          <TouchableOpacity onPress={retakePicture} style={styles.cameraBtn}>
+            <AntDesign name="closecircle" size={60} color="gray" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={savePicture} style={styles.cameraBtn}>
+            <AntDesign name="checkcircle" size={60} color="gray" />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -87,6 +91,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderRadius: 50,
     backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   previewContainer: {
     height: "90%",

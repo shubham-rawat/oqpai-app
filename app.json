@@ -32,7 +32,12 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.ACCESS_MEDIA_LOCATION"
       ],
-      "package": "com.shubhrawat.oqpaiapp"
+      "package": "com.shubhrawat.oqpaiapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAh7xnanPpSQXrq7Y3qC2Phi19JkTV7Bmc"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,6 +55,12 @@
           "photosPermission": "Allow OQPAI App to access your photos.",
           "savePhotosPermission": "Allow OQPAI App to save photos.",
           "isAccessMediaLocationEnabled": "true"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow OQPAI App to use your location."
         }
       ]
     ],

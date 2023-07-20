@@ -1,107 +1,26 @@
 import { useState } from "react";
-import { StyleSheet, View, TextInput, Pressable, Text } from "react-native";
-import MiniLogo from "../assets/mini_logo.svg";
-
+import { StyleSheet, View, TextInput, Text } from "react-native";
+import { useDispatch } from "react-redux";
+import { setDateTime } from "../store/userDataSlice";
+import { combineDateTime, convertUtcToLocal } from "../utils/DateTimeUtils";
 // custom components
+import MiniLogo from "../assets/mini_logo.svg";
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
-import TakePicture from "../components/TakePicture";
+import CustomDateTimePicker from "../components/CustomDateTimePicker";
 
 export default function BagsPage({ navigation }) {
-  const [bags, setBags] = useState("0");
-  const [photo, setPhoto] = useState(null);
-
-  const [part, setPart] = useState(1);
-
-  // for date picker
+  const [bags, setBags] = useState();
   const [date, setDate] = useState(new Date());
-  const [showDate, setShowDate] = useState(false);
-  const [dropDate, setDropDate] = useState("");
-
-  const toggleDatePicker = () => {
-    setShowDate(!showDate);
-  };
-
-  const onDateChange = ({ type }, selectedDate) => {
-    if (type === "set") {
-      setDate(selectedDate);
-      setDropDate(selectedDate.toDateString());
-    }
-    toggleDatePicker();
-  };
+  const [time, setTime] = useState(new Date());
+  const dispatch = useDispatch();
 
   const handleContinue = () => {
-    setPart(2);
+    const dropDateTime = convertUtcToLocal(combineDateTime(date, time));
+    const pickupDateTime = convertUtcToLocal(new Date());
+    dispatch(setDateTime({ bags, dropDateTime, pickupDateTime }));
+    navigation.navigate("CameraPage");
   };
-
-  const pictureSaved = () => {
-    setPart(3);
-  };
-
-  const placeOrder = () => {
-    navigation.navigate("OrderSummary");
-  };
-
-  const form1 = (
-    <>
-      <View style={styles.locationForm}>
-        <TextInput
-          value={bags}
-          onChangeText={setBags}
-          placeholder="Number Of bags"
-          style={styles.locationInput}
-          clearButtonMode="while-editing"
-          keyboardType="numeric"
-        />
-        <Seperator color="black" textWidth={0} type="dashed" />
-        {!showDate && (
-          <Pressable onPress={toggleDatePicker}>
-            <TextInput
-              value={dropDate}
-              placeholder="Drop-off Date & Time"
-              style={styles.locationInput}
-              clearButtonMode="while-editing"
-              editable={false}
-              onPressIn={toggleDatePicker}
-            />
-          </Pressable>
-        )}
-        {showDate && (
-          <DateTimePicker
-            mode="date"
-            value={date}
-            display="calendar"
-            onChange={onDateChange}
-          />
-        )}
-      </View>
-      <Button
-        label={"Take Picture"}
-        height={60}
-        theme="primary"
-        onPress={handleContinue}
-      />
-    </>
-  );
-
-  const form2 = (
-    <TakePicture
-      photo={photo}
-      setPhoto={setPhoto}
-      pictureSaved={pictureSaved}
-    />
-  );
-
-  const form3 = (
-    <View style={styles.locationForm}>
-      <Button
-        label={"Place Order"}
-        height={60}
-        theme="primary"
-        onPress={placeOrder}
-      />
-    </View>
-  );
 
   return (
     <View style={styles.formContainer}>
@@ -116,7 +35,38 @@ export default function BagsPage({ navigation }) {
       >
         Drop your luggage with <MiniLogo width={84} height={34} />
       </Text>
-      {part === 1 ? form1 : part === 2 ? form2 : form3}
+      <View style={styles.locationForm}>
+        <TextInput
+          value={bags}
+          onChangeText={setBags}
+          placeholder="Number Of bags"
+          style={styles.locationInput}
+          clearButtonMode="while-editing"
+          keyboardType="numeric"
+        />
+        <Seperator color="black" textWidth={0} type="dashed" />
+        <CustomDateTimePicker
+          pickerType="date"
+          style={styles.locationInput}
+          placeholder={"Drop-off Date"}
+          value={date}
+          setValue={setDate}
+        />
+        <Seperator color="black" textWidth={0} type="dashed" />
+        <CustomDateTimePicker
+          pickerType="time"
+          style={styles.locationInput}
+          placeholder={"Drop-off Time"}
+          value={time}
+          setValue={setTime}
+        />
+      </View>
+      <Button
+        label={"Take Picture"}
+        height={60}
+        theme="primary"
+        onPress={handleContinue}
+      />
     </View>
   );
 }

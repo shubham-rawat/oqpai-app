@@ -3,20 +3,19 @@ import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 // firebase authentication
 import { firebaseAuth } from "../firebase.config";
 import { signInWithEmailAndPassword } from "firebase/auth";
-
-import ForgotPassword from "./ForgotPassword";
+// redux
+import { useDispatch } from "react-redux";
+import { setUserData } from "../store/userDataSlice";
 // custom comps
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import CustomModal from "../components/CustomModal";
 import TextField from "../components/TextField";
-import { useDispatch } from "react-redux";
-import { setUserData } from "../store/userDataSlice";
+import ForgotPassword from "./ForgotPassword";
 
 export default function LoginPage({ navigation }) {
   const dispatch = useDispatch();
 
-  const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

@@ -7,6 +7,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 // custom comps
 import Button from "../components/Button";
 import TextField from "../components/TextField";
+import {
+  validateEmail,
+  validateMobileNumber,
+  validatePassword,
+} from "../utils/ValidationUtils";
 
 export default function SignUpPage({ navigation }) {
   const [name, setName] = useState("");
@@ -35,7 +40,18 @@ export default function SignUpPage({ navigation }) {
       alert("All fields are required");
       return false;
     } else if (pass1 !== pass2) {
-      alert("Passwords not matching");
+      alert("Passwords Not Matching");
+      return false;
+    } else if (!validateEmail(email)) {
+      alert("Invalid Email");
+      return false;
+    } else if (!validatePassword(pass1)) {
+      alert(
+        "Password must contain 1 UpperCase, 1 Lowecase, 1 Digit, 1 Special character and must have min length of 8"
+      );
+      return false;
+    } else if (!validateMobileNumber(mobile)) {
+      alert("Invalid Mobile Number");
       return false;
     }
     return true;

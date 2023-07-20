@@ -1,16 +1,21 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, TextInput, Text } from "react-native";
-import MiniLogo from "../assets/mini_logo.svg";
+import { useDispatch } from "react-redux";
+import { setLocation } from "../store/userDataSlice";
 
 // custom components
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
+import MapComponent from "../components/MapComponent";
+import MiniLogo from "../assets/mini_logo.svg";
 
 export default function LuggageLocation({ navigation }) {
   const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState("");
+  const dispatch = useDispatch();
 
   const sendLocation = () => {
+    dispatch(setLocation({ pickup, drop }));
     navigation.navigate("Bags");
   };
 
@@ -50,6 +55,7 @@ export default function LuggageLocation({ navigation }) {
         theme="primary"
         onPress={sendLocation}
       />
+      <MapComponent />
     </View>
   );
 }
@@ -60,6 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
     paddingHorizontal: 20,
+    alignItems: "stretch",
   },
   locationForm: {
     display: "flex",
