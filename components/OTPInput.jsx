@@ -1,22 +1,26 @@
 import { useEffect, useState, useRef } from "react";
 import { TextInput, StyleSheet, Text, View } from "react-native";
 
-export default function OTPInput({ otp, setOtp, length, onComplete }) {
+export default function OTPInput({ otp, setOtp, otpLength }) {
   const [timer, setTimer] = useState(59);
-  const otpInputs = Array(length).fill(useRef());
+  const otpInputRefs = useRef([]);
 
-  const handleOtpChange = (value, index) => {
+  const handleOnChangeText = (text, index) => {
+    // Update the OTP array with the new input value
     const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp.join(""));
+    newOtp[index] = text;
+    setOtp(newOtp);
 
-    if (value !== "" && index < length - 1) {
-      otpInputs[0].current.focus();
+    // Focus on the next input field (if available)
+    if (text !== "" && index < otpLength - 1) {
+      otpInputRefs.current[index + 1].focus();
     }
+  };
 
-    // If the OTP length is equal to the desired length, trigger the onComplete callback
-    if (newOtp.length === length) {
-      onComplete(newOtp.join(""));
+  const handleOnKeyPress = ({ nativeEvent }, index) => {
+    // Handle backspace to move to the previous input field (if available)
+    if (nativeEvent.key === "Backspace" && index > 0 && otp[index] === "") {
+      otpInputRefs.current[index - 1].focus();
     }
   };
 
@@ -40,30 +44,33 @@ export default function OTPInput({ otp, setOtp, length, onComplete }) {
 
   return (
     <View style={styles.otpMainContainer}>
-      <Text>Kindly check your phone for the verification code</Text>
+      <Text style={styles.message}>
+        Kindly check your phone for the verification code
+      </Text>
       <View style={styles.otpContainer}>
-        {Array(length)
-          .fill()
-          .map((_, idx) => (
-            <TextInput
-              key={idx}
-              style={styles.input}
-              onChangeText={(value) => handleOtpChange(value, idx)}
-              value={otp[idx] || ""}
-              maxLength={1}
-              keyboardType="numeric"
-              ref={otpInputs[idx]}
-            />
-          ))}
+        {otp.map((value, index) => (
+          <TextInput
+            key={index}
+            ref={(ref) => (otpInputRefs.current[index] = ref)}
+            style={styles.input}
+            value={value}
+            onChangeText={(text) => handleOnChangeText(text, index)}
+            onKeyPress={(event) => handleOnKeyPress(event, index)}
+            maxLength={1}
+            keyboardType="numeric"
+            autoFocus={index === 0}
+            selectTextOnFocus
+          />
+        ))}
       </View>
-      <Text>
+      <Text style={styles.message}>
         Didn't recieve the code?{" "}
         <Text style={{ color: `${timer > 0 ? "black" : "#0B6EFD"}` }}>
           Resend Code
           {timer > 0 && ` in 0:${timer}`}
         </Text>
       </Text>
-      <Text style={{ color: "#0B6EFD" }}>Get via call</Text>
+      <Text style={[styles.message, { color: "#0B6EFD" }]}>Get via call</Text>
     </View>
   );
 }
@@ -82,12 +89,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 4,
     marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: "black",
+    marginVertical: 10,
+    borderWidth: 2,
+    borderColor: "#E5E3F1",
     fontSize: 20,
     textAlign: "center",
+    backgroundColor: "#E5E3F1",
+  },
+  message: {
+    color: "#555555",
+    fontSize: 18,
+    marginBottom: 10,
   },
 });

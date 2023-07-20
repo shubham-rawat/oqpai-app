@@ -5,46 +5,36 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
+  Pressable,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import Button from "../components/Button";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
-// import OTPInput from "../components/OTPInput";
+import Button from "../components/Button";
+import OTPInput from "../components/OTPInput";
 
-export default function VerifyPhone({ navigation }) {
-  const [otp, setOtp] = useState("");
+export default function VerifyPhone({ route, navigation }) {
+  const { email, mobile, name } = route.params;
+  const otpLength = 4;
+  const [otp, setOtp] = useState(Array(otpLength).fill(""));
   const dispatch = useDispatch();
 
   const handleVerifyOtp = (otp) => {
-    Alert.alert("OTP", otp);
-    dispatch(setUserData({ email, name: "Name" }));
-    navigation.navigate("MainPage");
+    Alert.alert("OTP", otp.toString());
+    dispatch(setUserData({ email: email, name: name }));
+    // navigation.navigate("MainPage");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
-        <AntDesign name="arrowleft" size={24} color="black" />
+        <Pressable onPress={() => navigation.goBack()}>
+          <AntDesign name="arrowleft" size={24} color="black" />
+        </Pressable>
         <Text style={styles.title}>Verify Phone</Text>
       </View>
       <View style={styles.bodyContainer}>
-        <Text>Enter OTP</Text>
-        <TextInput
-          value={otp}
-          onChangeText={setOtp}
-          keyboardType="numeric"
-          style={styles.input}
-          textAlign="center"
-          maxLength={4}
-        />
-        {/* <OTPInput
-          otp={otp}
-          setOtp={setOtp}
-          length={4}
-          onComplete={handleVerifyOtp}
-        /> */}
+        <OTPInput otp={otp} setOtp={setOtp} otpLength={otpLength} />
         <Button
           label={"Verify"}
           height={60}
@@ -63,26 +53,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     height: "100%",
-    padding: 30,
+    // padding: 30,
+    paddingTop: 20,
   },
   titleContainer: {
     display: "flex",
     flexDirection: "row",
     width: "100%",
     height: "10%",
-    paddingVertical: 20,
     justifyContent: "flex-start",
+    alignItems: "flex-end",
+    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    marginLeft: 10,
   },
   bodyContainer: {
     display: "flex",
     width: "100%",
     height: "90%",
     alignItems: "stretch",
-    paddingVertical: 20,
+    padding: 20,
     justifyContent: "space-between",
   },
   input: {

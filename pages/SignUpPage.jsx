@@ -28,7 +28,7 @@ export default function SignUpPage({ navigation }) {
           email,
           pass1
         );
-        navigation.navigate("VerifyPhone");
+        navigation.navigate("VerifyPhone", { email, mobile, name });
       } catch (error) {
         console.log(error);
       }

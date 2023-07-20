@@ -24,7 +24,7 @@ export default function CustomModal({
 
 const styles = StyleSheet.create({
   modalContent: {
-    height: "30%",
+    height: "40%",
     width: "100%",
     backgroundColor: "#fff",
     borderTopRightRadius: 18,
