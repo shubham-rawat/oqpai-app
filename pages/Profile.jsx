@@ -5,6 +5,8 @@ import {
   TouchableHighlight,
   Image,
 } from "react-native";
+import { signOut } from "firebase/auth";
+import { firebaseAuth } from "../firebase.config";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { removeUserData } from "../store/userDataSlice";
@@ -14,6 +16,7 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   const logouthandler = () => {
+    signOut(firebaseAuth);
     dispatch(removeUserData());
   };
 
@@ -37,11 +40,12 @@ export default function Profile() {
           style={{
             borderRightWidth: 2,
             borderRightColor: "#EDEDED",
-            padding: 20,
+            padding: 10,
             justifyContent: "center",
+            maxWidth: 170,
           }}
         >
-          <Text style={{ fontSize: 36, fontWeight: "700", color: "#3C3C3C" }}>
+          <Text style={{ fontSize: 22, fontWeight: "700", color: "#3C3C3C" }}>
             {userData.name}
           </Text>
           <Text style={{ fontSize: 14, fontWeight: "400", color: "#777777" }}>
@@ -50,7 +54,7 @@ export default function Profile() {
         </View>
         <View
           style={{
-            padding: 20,
+            padding: 10,
             alignItems: "flex-end",
             justifyContent: "center",
           }}

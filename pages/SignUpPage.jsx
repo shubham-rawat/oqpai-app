@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 // firebase authentication
 import { firebaseAuth } from "../firebase.config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 // custom comps
 import Button from "../components/Button";
@@ -28,7 +28,12 @@ export default function SignUpPage({ navigation }) {
           email,
           pass1
         );
-        navigation.navigate("VerifyPhone", { email, mobile, name });
+        await updateProfile(res.user, { displayName: name });
+        navigation.navigate("VerifyPhone", {
+          email,
+          mobile,
+          name,
+        });
       } catch (error) {
         console.log(error);
       }

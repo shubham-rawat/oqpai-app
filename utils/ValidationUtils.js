@@ -8,20 +8,14 @@ export const validateEmail = (email) => {
 export const validatePassword = (password) => {
   // Regular expression for password validation
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/;
   // Test the password against the regular expression
   return passwordRegex.test(password);
 };
 
 export const validateMobileNumber = (mobileNumber) => {
   // Regular expression for numeric digits only
-  const numericRegex = /^[0-9]+$/;
+  const numericRegex = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/;
   // Check if the mobile number contains only numeric digits
-  if (!numericRegex.test(mobileNumber)) {
-    return false;
-  }
-  // Define the expected length of the mobile number
-  const expectedLength = 10;
-  // Check if the mobile number has the expected length
-  return mobileNumber.length === expectedLength;
+  return numericRegex.test(mobileNumber);
 };

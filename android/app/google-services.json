@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "819540597123",
+    "project_id": "oqpai-4e758",
+    "storage_bucket": "oqpai-4e758.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819540597123:android:6db454886a1b3fdedd7eb6",
+        "android_client_info": {
+          "package_name": "com.shubham.oqpai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819540597123-jcvn26uunr7t7dl3h5g3rjuneo9j4shl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkP-Vn7Qc1lhuneEt4Bto8l8B6UP42QnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819540597123-jcvn26uunr7t7dl3h5g3rjuneo9j4shl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

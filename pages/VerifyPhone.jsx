@@ -10,20 +10,51 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
+import { firebaseAuth } from "../firebase.config";
+import { signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
 import Button from "../components/Button";
 import OTPInput from "../components/OTPInput";
+import { useEffect } from "react";
 
 export default function VerifyPhone({ route, navigation }) {
   const { email, mobile, name } = route.params;
-  const otpLength = 4;
+  const otpLength = 6;
   const [otp, setOtp] = useState(Array(otpLength).fill(""));
+  const [confirmation, setConfirmation] = useState();
   const dispatch = useDispatch();
 
+  // const verifier = new RecaptchaVerifier(firebaseAuth, "sign-in-button", {
+  //   size: "invisible",
+  //   callback: (response) => {},
+  // });
+
   const handleVerifyOtp = (otp) => {
-    Alert.alert("OTP", otp.toString());
+    // confirmation
+    //   .confirm(otp.join(""))
+    //   .then((user) => {
+    //     // this.setState({ userId: user.uid });
+    //     console.log(user);
+    //     alert(`Verified! ${user.uid}`);
+    //   })
+    //   .catch((error) => {
+    //     alert(error.message);
+    //     console.log(error);
+    //   });
     dispatch(setUserData({ email: email, name: name }));
-    // navigation.navigate("MainPage");
+    navigation.navigate("MainPage");
   };
+
+  // const sendOtp = () => {
+  //   try {
+  //     signInWithPhoneNumber(firebaseAuth, mobile, verifier).then(
+  //       (confirmationResult) => setConfirmation(confirmationResult)
+  //     );
+  //   } catch (error) {
+  //     alert("Error sending OTP");
+  //   }
+  // };
+
+  // useEffect(sendOtp, []);
 
   return (
     <SafeAreaView style={styles.container}>

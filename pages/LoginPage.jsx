@@ -30,7 +30,7 @@ export default function LoginPage({ navigation }) {
         email,
         password
       );
-      dispatch(setUserData({ email, name: "Name" }));
+      dispatch(setUserData({ email, name: res.user.displayName }));
       navigation.navigate("MainPage");
     } catch (error) {
       alert("Invalid Email or Password");
