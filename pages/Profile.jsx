@@ -5,8 +5,7 @@ import {
   TouchableHighlight,
   Image,
 } from "react-native";
-import { signOut } from "firebase/auth";
-import { firebaseAuth } from "../firebase.config";
+import auth from "@react-native-firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { removeUserData } from "../store/userDataSlice";
@@ -16,7 +15,7 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   const logouthandler = () => {
-    signOut(firebaseAuth);
+    auth().signOut();
     dispatch(removeUserData());
   };
 

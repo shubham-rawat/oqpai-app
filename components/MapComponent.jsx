@@ -11,7 +11,12 @@ const initialRegion = {
 };
 
 const initialMarker = {
-  coords: { latitude: 37.78825, longitude: -122.4324 },
+  coords: {
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  },
   title: "Pick Up",
   desc: "Pick up location",
 };
@@ -217,7 +222,8 @@ export default function MapComponent() {
   return (
     <View style={styles.container}>
       <MapView
-        region={region}
+        // region={region}
+        initialRegion={region}
         onRegionChange={(newRegion) => setRegion({ newRegion })}
         style={styles.map}
         provider={PROVIDER_GOOGLE}

@@ -10,8 +10,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
-import { firebaseAuth } from "../firebase.config";
-import { signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+// import { firebaseAuth } from "../firebaseConfig";
+// import { signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
 import Button from "../components/Button";
 import OTPInput from "../components/OTPInput";
 import { useEffect } from "react";
@@ -41,7 +41,7 @@ export default function VerifyPhone({ route, navigation }) {
     //     console.log(error);
     //   });
     dispatch(setUserData({ email: email, name: name }));
-    navigation.navigate("MainPage");
+    // navigation.navigate("MainPage");
   };
 
   // const sendOtp = () => {

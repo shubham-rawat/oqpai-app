@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 // firebase authentication
-import { firebaseAuth } from "../firebase.config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
 // redux
 import { useDispatch } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
@@ -25,13 +24,9 @@ export default function LoginPage({ navigation }) {
   const loginHandler = async () => {
     setLoading(true);
     try {
-      const res = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password
-      );
+      const res = await auth().signInWithEmailAndPassword(email, password);
       dispatch(setUserData({ email, name: res.user.displayName }));
-      navigation.navigate("MainPage");
+      // navigation.navigate("MainPage");
     } catch (error) {
       alert("Invalid Email or Password");
       setEmail("");

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 // firebase authentication
-import { firebaseAuth } from "../firebase.config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
 
 // custom comps
 import Button from "../components/Button";
@@ -23,12 +22,8 @@ export default function SignUpPage({ navigation }) {
   const signupHandler = async () => {
     if (validateForm()) {
       try {
-        const res = await createUserWithEmailAndPassword(
-          firebaseAuth,
-          email,
-          pass1
-        );
-        await updateProfile(res.user, { displayName: name });
+        const res = await auth().createUserWithEmailAndPassword(email, pass1);
+        await auth().currentUser.updateProfile({ displayName: name });
         navigation.navigate("VerifyPhone", {
           email,
           mobile,

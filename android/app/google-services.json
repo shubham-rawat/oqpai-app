@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:819540597123:android:6db454886a1b3fdedd7eb6",
+        "mobilesdk_app_id": "1:819540597123:android:f141748f8564ec8edd7eb6",
         "android_client_info": {
-          "package_name": "com.shubham.oqpai"
+          "package_name": "com.shubhrawat.oqpaiapp"
         }
       },
       "oauth_client": [
