@@ -7,7 +7,6 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
 import { getFontSize } from "../utils/FontScaling";
 import { StatusBar } from "expo-status-bar";
@@ -20,10 +19,11 @@ import {
   BillingComponent,
 } from "../components/OrderDetailsComponents";
 
-export default function OrderSummary({ navigation }) {
-  const data = useSelector((state) => state.userData);
-  const placeOrder = () => {
-    navigation.navigate("EtaPage");
+export default function UpdateOrder({ navigation, route }) {
+  const { orderData } = route.params;
+  const dropNow = () => {};
+  const updateDrop = () => {
+    navigation.navigate("UpdateDestination", { orderData });
   };
 
   return (
@@ -33,20 +33,20 @@ export default function OrderSummary({ navigation }) {
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
         </Pressable>
-        <Text style={styles.title}>Order Summary</Text>
+        <Text style={styles.title}>Update Order</Text>
       </View>
       <ScrollView contentContainerStyle={styles.bodyContainer}>
         <BagDetailsComponent
-          numberOfBags={data?.bags}
+          numberOfBags={orderData?.bags}
           packageName={"Daily Package"}
         />
         <LocationComponent
-          pickupLocation={data?.location.pickup}
-          dropLocation={data?.location.drop}
+          pickupLocation={orderData?.location.pickup}
+          dropLocation={orderData?.location.drop}
         />
         <HoldingTimeComponent
-          pickDateTime={data?.dateTime.pickup}
-          dropDateTime={data?.dateTime.drop}
+          pickDateTime={orderData?.dateTime.pickup}
+          dropDateTime={orderData?.dateTime.drop}
         />
         <BillingComponent />
       </ScrollView>
@@ -54,8 +54,14 @@ export default function OrderSummary({ navigation }) {
         <Button
           size={60}
           theme="primary"
-          label={"Place Order"}
-          onPress={placeOrder}
+          label={"Update Drop Location"}
+          onPress={updateDrop}
+        />
+        <Button
+          size={60}
+          theme="primary"
+          label={"Drop Now"}
+          onPress={dropNow}
         />
       </View>
     </SafeAreaView>

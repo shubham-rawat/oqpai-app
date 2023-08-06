@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { TextInput, StyleSheet, Text, View } from "react-native";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function OTPInput({ otp, setOtp, otpLength }) {
   const [timer, setTimer] = useState(59);
@@ -96,13 +97,13 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderWidth: 2,
     borderColor: "#E5E3F1",
-    fontSize: 20,
+    fontSize: getFontSize(20),
     textAlign: "center",
     backgroundColor: "#E5E3F1",
   },
   message: {
     color: "#555555",
-    fontSize: 18,
+    fontSize: getFontSize(18),
     marginBottom: 10,
   },
 });

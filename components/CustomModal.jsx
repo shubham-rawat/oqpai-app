@@ -1,5 +1,6 @@
 import { Modal, StyleSheet, Pressable, View, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function CustomModal({
   modalName,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#000",
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: "bold",
   },
   contentContainer: {

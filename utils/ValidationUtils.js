@@ -15,7 +15,13 @@ export const validatePassword = (password) => {
 
 export const validateMobileNumber = (mobileNumber) => {
   // Regular expression for numeric digits only
-  const numericRegex = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/;
+  const numericRegex = /^[0-9]+$/;
   // Check if the mobile number contains only numeric digits
-  return numericRegex.test(mobileNumber);
+  if (!numericRegex.test(mobileNumber)) {
+    return false;
+  }
+  // Define the expected length of the mobile number (change this according to your country's format)
+  const expectedLength = 10;
+  // Check if the mobile number has the expected length
+  return mobileNumber.length === expectedLength;
 };

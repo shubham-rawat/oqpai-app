@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import TakePicture from "../components/TakePicture";
-import MiniLogo from "../assets/mini_logo.svg";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function CameraPage({ navigation }) {
   const [photo, setPhoto] = useState(null);
@@ -18,14 +18,14 @@ export default function CameraPage({ navigation }) {
     <View style={styles.formContainer}>
       <Text
         style={{
-          fontSize: 24,
+          fontSize: getFontSize(24),
           flexWrap: "wrap",
           flexDirection: "row",
-          width: 230,
-          height: 65,
+          paddingVertical: 10,
+          color: "#3C3C3C",
         }}
       >
-        Drop your luggage with <MiniLogo width={84} height={34} />
+        Take a pictue
       </Text>
       <TakePicture
         photo={photo}

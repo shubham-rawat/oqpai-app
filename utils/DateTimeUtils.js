@@ -13,18 +13,6 @@ export const combineDateTime = (dateObj, timeObj) => {
   return combinedDateTime;
 };
 
-export const convertUtcToLocal = (utcDate) => {
-  // Get the UTC timestamp (milliseconds since January 1, 1970)
-  const utcTimestamp = utcDate.getTime();
-  // Get the timezone offset in minutes for the local time
-  const timezoneOffsetMinutes = new Date().getTimezoneOffset();
-  // Calculate the local timestamp by adding the timezone offset
-  const localTimestamp = utcTimestamp - timezoneOffsetMinutes * 60 * 1000;
-  // Create a new Date object using the local timestamp
-  const localDate = new Date(localTimestamp);
-  return localDate;
-};
-
 export const getTimeDifferenceInHours = (startDate, endDate) => {
   // Get the time difference in milliseconds
   const timeDifferenceMs = endDate - startDate;

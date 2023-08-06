@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // pages
@@ -14,6 +14,8 @@ import HistoryIcon from "../assets/history_icon.svg";
 import HistoryIconFocus from "../assets/history_icon_focus.svg";
 import ProfileIcon from "../assets/profile_icon.svg";
 import ProfileIconFocus from "../assets/profile_icon_focus.svg";
+import { getFontSize } from "../utils/FontScaling";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Tab = createBottomTabNavigator();
 
@@ -70,8 +72,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 14,
   },
   tabLable: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: getFontSize(12),
+    fontWeight: "400",
     marginBottom: 15,
   },
 });

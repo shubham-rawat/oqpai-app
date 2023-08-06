@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Platform } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Logo from "../assets/mini_logo.svg";
 
@@ -22,10 +22,10 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-end",
-    padding: 20,
+    alignItems: "center",
     width: "100%",
-    height: 96,
+    paddingHorizontal: 20,
+    height: 70,
   },
   generateBoxShadowStyle: (
     xOffset,

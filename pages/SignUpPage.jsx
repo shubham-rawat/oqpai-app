@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
+import { StatusBar } from "expo-status-bar";
 // firebase authentication
-import { firebaseAuth } from "../firebase.config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-
+import auth from "@react-native-firebase/auth";
 // custom comps
 import Button from "../components/Button";
 import TextField from "../components/TextField";
@@ -12,6 +11,7 @@ import {
   validateMobileNumber,
   validatePassword,
 } from "../utils/ValidationUtils";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function SignUpPage({ navigation }) {
   const [name, setName] = useState("");
@@ -19,24 +19,22 @@ export default function SignUpPage({ navigation }) {
   const [email, setEmail] = useState("");
   const [pass1, setPass1] = useState("");
   const [pass2, setPass2] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const signupHandler = async () => {
-    if (validateForm()) {
-      try {
-        const res = await createUserWithEmailAndPassword(
-          firebaseAuth,
-          email,
-          pass1
-        );
-        await updateProfile(res.user, { displayName: name });
-        navigation.navigate("VerifyPhone", {
-          email,
-          mobile,
-          name,
-        });
-      } catch (error) {
-        console.log(error);
+    setLoading(true);
+    try {
+      if (validateForm()) {
+        const res = await auth().createUserWithEmailAndPassword(email, pass1);
+        await auth().currentUser.updateProfile({ displayName: name });
+        alert(auth().currentUser.email);
+        navigation.navigate("VerifyPhone", { email, mobile, name });
       }
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,55 +61,66 @@ export default function SignUpPage({ navigation }) {
   };
 
   return (
-    <View style={styles.signupContainer}>
-      <View style={styles.messageContainer}>
-        <Text style={styles.heading}>Hi!</Text>
-        <Text style={styles.subheading}>Create a new account</Text>
-      </View>
-      <View style={styles.signupForm}>
-        <TextField
-          value={name}
-          onChangeText={setName}
-          placeholder="Name"
-          autoCapitalize="words"
-        />
-        <TextField
-          value={mobile}
-          onChangeText={setMobile}
-          placeholder="Mobile Number"
-          keyboardType="numeric"
-        />
-        <TextField value={email} onChangeText={setEmail} placeholder="Email" />
-        <TextField
-          value={pass1}
-          onChangeText={setPass1}
-          placeholder="Password"
-          secure={true}
-        />
-        <TextField
-          value={pass2}
-          onChangeText={setPass2}
-          placeholder="Confirm Password"
-          secure={true}
-        />
-        <Button
-          theme={"primary"}
-          label={"Signup"}
-          onPress={signupHandler}
-          height={60}
-        />
-      </View>
-      <Text style={styles.loginMsg}>
-        Already have an account?
-        <Text
-          style={{ color: "#0B6EFD" }}
-          onPress={() => navigation.navigate("LoginPage")}
-        >
-          {" "}
-          Login
+    <>
+      <StatusBar animated style="auto" />
+      <View style={styles.signupContainer}>
+        <View style={styles.messageContainer}>
+          <Text style={styles.heading}>Hi!</Text>
+          <Text style={styles.subheading}>Create a new account</Text>
+        </View>
+        <View style={styles.signupForm}>
+          <TextField
+            value={name}
+            onChangeText={setName}
+            placeholder="Name"
+            autoCapitalize="words"
+          />
+          <TextField
+            value={mobile}
+            onChangeText={setMobile}
+            placeholder="Mobile Number"
+            keyboardType="number-pad"
+          />
+          <TextField
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+          />
+          <TextField
+            value={pass1}
+            onChangeText={setPass1}
+            placeholder="Password"
+            secure={true}
+          />
+          <TextField
+            value={pass2}
+            onChangeText={setPass2}
+            placeholder="Confirm Password"
+            secure={true}
+          />
+          {loading ? (
+            <ActivityIndicator size="large" color="#0B6EFD" />
+          ) : (
+            <Button
+              theme={"primary"}
+              label={"Signup"}
+              onPress={signupHandler}
+              height={60}
+            />
+          )}
+        </View>
+        <Text style={styles.loginMsg}>
+          Already have an account?
+          <Text
+            style={{ color: "#0B6EFD" }}
+            onPress={() => navigation.navigate("LoginPage")}
+          >
+            {" "}
+            Login
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </View>
+    </>
   );
 }
 
@@ -128,37 +137,27 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "100%",
     paddingHorizontal: 30,
-    marginBottom: 50,
+    aspectRatio: 3 / 1,
     alignItems: "flex-start",
   },
   heading: {
     fontWeight: "bold",
-    fontSize: 64,
+    fontSize: getFontSize(48),
   },
   subheading: {
-    fontSize: 24,
+    fontSize: getFontSize(18),
   },
   signupForm: {
     display: "flex",
+    width: "100%",
     paddingHorizontal: 30,
-    marginBottom: 10,
     justifyContent: "space-between",
     alignItems: "stretch",
-    width: "100%",
-    height: "50%",
-  },
-  input: {
-    height: 50,
-    borderWidth: 0,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-    fontSize: 18,
-    backgroundColor: "#EEEEFA",
-    borderRadius: 10,
+    aspectRatio: 1 / 1,
   },
   loginMsg: {
     color: "#000",
-    fontSize: 16,
+    fontSize: getFontSize(14),
     position: "absolute",
     bottom: 10,
   },

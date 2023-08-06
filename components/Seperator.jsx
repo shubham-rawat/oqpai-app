@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text } from "react-native";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function Seperator({
   text = "",
@@ -16,7 +17,7 @@ export default function Seperator({
               width: textWidth,
               textAlign: "center",
               color: color,
-              fontSize: 18,
+              fontSize: getFontSize(18),
               fontWeight: 500,
             }}
           >

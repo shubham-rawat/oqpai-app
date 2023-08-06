@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 // firebase authentication
-import { firebaseAuth } from "../firebase.config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
 // redux
 import { useDispatch } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
+import { StatusBar } from "expo-status-bar";
 // custom comps
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import CustomModal from "../components/CustomModal";
 import TextField from "../components/TextField";
 import ForgotPassword from "./ForgotPassword";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function LoginPage({ navigation }) {
   const dispatch = useDispatch();
@@ -19,19 +20,22 @@ export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [forgot, setForgot] = useState(false);
 
   const loginHandler = async () => {
     setLoading(true);
     try {
-      const res = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password
+      const res = await auth().signInWithEmailAndPassword(email, password);
+      dispatch(
+        setUserData({
+          email,
+          name: res.user.displayName,
+          // name: "Shubham",
+          mobile: res.user.phoneNumber,
+          // mobile: "+919582298647",
+        })
       );
-      dispatch(setUserData({ email, name: res.user.displayName }));
-      navigation.navigate("MainPage");
+      // navigation.navigate("MainPage");
     } catch (error) {
       alert("Invalid Email or Password");
       setEmail("");
@@ -47,18 +51,13 @@ export default function LoginPage({ navigation }) {
 
   return (
     <>
+      <StatusBar animated style="auto" />
       <View style={styles.loginContainer}>
         <View style={styles.messageContainer}>
           <Text style={styles.heading}>Welcome!</Text>
           <Text style={styles.subheading}>Sign in to continue</Text>
         </View>
         <View style={styles.loginForm}>
-          {/* <TextField
-            value={mobile}
-            onChangeText={setMobile}
-            placeholder="Mobile Number"
-            keyboardType="numeric"
-          /> */}
           <TextField
             value={email}
             onChangeText={setEmail}
@@ -130,29 +129,30 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "100%",
     paddingHorizontal: 30,
-    marginBottom: 50,
+    aspectRatio: 3 / 1,
     alignItems: "flex-start",
   },
   heading: {
-    fontWeight: "bold",
-    fontSize: 64,
+    fontWeight: "700",
+    fontSize: getFontSize(48),
   },
   subheading: {
-    fontSize: 24,
+    fontWeight: "400",
+    fontSize: getFontSize(18),
   },
   loginForm: {
     display: "flex",
     paddingHorizontal: 30,
-    marginBottom: 10,
     justifyContent: "space-between",
     alignItems: "stretch",
     width: "100%",
-    height: "22%",
+    aspectRatio: 2 / 1,
   },
   forgotPass: {
     color: "#0B6EFD",
-    fontSize: 16,
-    marginBottom: 20,
+    fontSize: getFontSize(14),
+    fontWeight: "400",
+    marginVertical: 20,
   },
   bottomContainer: {
     display: "flex",
@@ -160,11 +160,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "stretch",
     width: "100%",
-    height: "10%",
   },
   signUp: {
     color: "#000",
-    fontSize: 16,
+    fontSize: getFontSize(14),
     position: "absolute",
     bottom: 10,
   },

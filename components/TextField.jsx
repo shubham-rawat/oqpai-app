@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function TextField({
   value,
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     paddingHorizontal: 30,
     paddingVertical: 10,
-    fontSize: 18,
+    fontSize: getFontSize(14),
     backgroundColor: "#EEEEFA",
     borderRadius: 10,
   },
