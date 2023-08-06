@@ -17,6 +17,9 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow OQPAI App to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow OQPAI App to save photos."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -64,7 +67,8 @@
           "locationAlwaysAndWhenInUsePermission": "Allow OQPAI App to use your location."
         }
       ],
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "extra": {
       "eas": {

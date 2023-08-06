@@ -2,12 +2,12 @@ import { useState } from "react";
 import { StyleSheet, View, TextInput, Text } from "react-native";
 import { useDispatch } from "react-redux";
 import { setDateTime } from "../store/userDataSlice";
-import { combineDateTime, convertUtcToLocal } from "../utils/DateTimeUtils";
+import { combineDateTime } from "../utils/DateTimeUtils";
 // custom components
-import MiniLogo from "../assets/mini_logo.svg";
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import CustomDateTimePicker from "../components/CustomDateTimePicker";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function BagsPage({ navigation }) {
   const [bags, setBags] = useState();
@@ -16,24 +16,28 @@ export default function BagsPage({ navigation }) {
   const dispatch = useDispatch();
 
   const handleContinue = () => {
-    const dropDateTime = convertUtcToLocal(combineDateTime(date, time));
-    const pickupDateTime = convertUtcToLocal(new Date());
-    dispatch(setDateTime({ bags, dropDateTime, pickupDateTime }));
-    navigation.navigate("CameraPage");
+    if (bags > 2 || bags < 1) {
+      alert("Number of bags should be 1 or 2");
+    } else {
+      const dropDateTime = combineDateTime(date, time);
+      const pickupDateTime = new Date();
+      dispatch(setDateTime({ bags, dropDateTime, pickupDateTime }));
+      navigation.navigate("CameraPage");
+    }
   };
 
   return (
     <View style={styles.formContainer}>
       <Text
         style={{
-          fontSize: 24,
+          fontSize: getFontSize(24),
           flexWrap: "wrap",
           flexDirection: "row",
-          width: 230,
-          height: 65,
+          paddingVertical: 10,
+          color: "#3C3C3C",
         }}
       >
-        Drop your luggage with <MiniLogo width={84} height={34} />
+        Select
       </Text>
       <View style={styles.locationForm}>
         <TextInput
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
   locationInput: {
     borderWidth: 0,
     padding: 10,
-    fontSize: 18,
+    fontSize: getFontSize(18),
     height: 60,
   },
 });

@@ -1,10 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function Button({
   label,
   theme = "primary",
   onPress,
   height = 50,
+  style = {},
 }) {
   const colorScheme = {
     background: "",
@@ -33,7 +35,7 @@ export default function Button({
       break;
   }
   return (
-    <View style={styles.buttonContainer}>
+    <View style={[styles.buttonContainer, { ...style }]}>
       <Pressable
         style={[
           styles.button,
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonLabel: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: getFontSize(18),
+    fontWeight: "700",
   },
 });

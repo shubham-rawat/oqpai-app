@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Text } from "react-native";
+import { StyleSheet, View, TextInput, Text, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import { setLocation } from "../store/userDataSlice";
 
@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import MapComponent from "../components/MapComponent";
 import MiniLogo from "../assets/mini_logo.svg";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function LuggageLocation({ navigation }) {
   const [pickup, setPickup] = useState("");
@@ -20,10 +21,10 @@ export default function LuggageLocation({ navigation }) {
   };
 
   return (
-    <View style={styles.formContainer}>
+    <ScrollView contentContainerStyle={styles.formContainer}>
       <Text
         style={{
-          fontSize: 24,
+          fontSize: getFontSize(24),
           flexWrap: "wrap",
           flexDirection: "row",
           width: 230,
@@ -55,8 +56,10 @@ export default function LuggageLocation({ navigation }) {
         theme="primary"
         onPress={sendLocation}
       />
-      <MapComponent />
-    </View>
+      <View style={{ paddingVertical: "5%" }}>
+        <MapComponent />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -78,7 +81,7 @@ const styles = StyleSheet.create({
   locationInput: {
     borderWidth: 0,
     padding: 10,
-    fontSize: 18,
+    fontSize: getFontSize(18),
     height: 60,
   },
 });

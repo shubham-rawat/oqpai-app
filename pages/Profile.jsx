@@ -5,10 +5,12 @@ import {
   TouchableHighlight,
   Image,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import auth from "@react-native-firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { removeUserData } from "../store/userDataSlice";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function Profile() {
   const userData = useSelector((state) => state.userData);
@@ -21,6 +23,7 @@ export default function Profile() {
 
   return (
     <View style={styles.profileContainer}>
+      <StatusBar style="auto" />
       <Ionicons
         name="ios-log-out-outline"
         size={42}
@@ -44,10 +47,22 @@ export default function Profile() {
             maxWidth: 170,
           }}
         >
-          <Text style={{ fontSize: 22, fontWeight: "700", color: "#3C3C3C" }}>
+          <Text
+            style={{
+              fontSize: getFontSize(22),
+              fontWeight: "700",
+              color: "#3C3C3C",
+            }}
+          >
             {userData.name}
           </Text>
-          <Text style={{ fontSize: 14, fontWeight: "400", color: "#777777" }}>
+          <Text
+            style={{
+              fontSize: getFontSize(14),
+              fontWeight: "400",
+              color: "#777777",
+            }}
+          >
             {userData.mobile}
           </Text>
         </View>
@@ -58,10 +73,22 @@ export default function Profile() {
             justifyContent: "center",
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: "400", color: "#777777" }}>
+          <Text
+            style={{
+              fontSize: getFontSize(18),
+              fontWeight: "400",
+              color: "#777777",
+            }}
+          >
             Orders
           </Text>
-          <Text style={{ fontSize: 22, fontWeight: "400", color: "#3C3C3C" }}>
+          <Text
+            style={{
+              fontSize: getFontSize(22),
+              fontWeight: "400",
+              color: "#3C3C3C",
+            }}
+          >
             61
           </Text>
         </View>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Text, Alert, TextInput } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch } from "react-redux";
@@ -12,12 +12,10 @@ import {
 import { setLocation } from "../store/userDataSlice";
 import { getFontSize } from "../utils/FontScaling";
 import Button from "../components/Button";
+import MiniLogo from "../assets/mini_logo.svg";
 import { concatAsCSV } from "../utils/TextUtils";
-import { StatusBar } from "expo-status-bar";
 
-export default function UpdateDestination({ navigation, route }) {
-  const { orderData } = route.params;
-  const pickup = orderData?.location.pickup;
+const LocationMap = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [pickupCoordinates, setPickupCoordinates] = useState(null);
   const [dropCoordinates, setDropCoordinates] = useState(null);
@@ -27,6 +25,7 @@ export default function UpdateDestination({ navigation, route }) {
   const dispatch = useDispatch();
 
   const sendLocation = () => {
+    const pickup = pickupGooglePlacesRef.current?.getAddressText();
     const drop = dropGooglePlacesRef.current?.getAddressText();
     if (!drop || !pickup) {
       Alert.alert("Missing Data", "Set the locations first");
@@ -39,7 +38,7 @@ export default function UpdateDestination({ navigation, route }) {
           dropCoords: dropCoordinates,
         })
       );
-      navigation.navigate("OrderSummary");
+      navigation.navigate("Bags");
     }
   };
 
@@ -56,7 +55,7 @@ export default function UpdateDestination({ navigation, route }) {
         const { latitude, longitude } = location.coords;
 
         setRegion({
-          latitude: latitude + 0.01,
+          latitude,
           longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
@@ -67,8 +66,6 @@ export default function UpdateDestination({ navigation, route }) {
           latitude,
           longitude,
         });
-
-        pickupGooglePlacesRef.current?.setAddressText(pickup);
 
         // Setting default location for drop marker
         setDropCoordinates({
@@ -155,15 +152,39 @@ export default function UpdateDestination({ navigation, route }) {
 
   return (
     <View style={styles.formContainer}>
-      <StatusBar style="auto" />
-      <Text style={{ fontSize: getFontSize(24), marginBottom: 10 }}>
-        Update your drop location
+      <Text
+        style={{
+          fontSize: getFontSize(24),
+          flexWrap: "wrap",
+          flexDirection: "row",
+          width: 230,
+          height: 65,
+          marginBottom: 10,
+        }}
+      >
+        Drop your luggage with <MiniLogo width={84} height={34} />
       </Text>
-      <TextInput
-        style={styles.googlePlacesTextInput}
-        value={pickup}
-        editable={false}
-      />
+      <View style={styles.locationInputContainer}>
+        <GooglePlacesAutocomplete
+          ref={pickupGooglePlacesRef}
+          placeholder="Pick up from"
+          onPress={(data, details) =>
+            handleLocationSelect(data, details, "pickup")
+          }
+          fetchDetails={true}
+          query={{
+            key: "AIzaSyAh7xnanPpSQXrq7Y3qC2Phi19JkTV7Bmc",
+            language: "en",
+            components: "country:in",
+          }}
+          styles={{
+            container: { ...styles.googlePlacesContainer, zIndex: 2 },
+            listView: styles.googlePlacesListView,
+            textInputContainer: styles.googlePlacesTextInputContainer,
+            textInput: styles.googlePlacesTextInput,
+          }}
+        />
+      </View>
       <View style={styles.locationInputContainer}>
         <GooglePlacesAutocomplete
           ref={dropGooglePlacesRef}
@@ -206,7 +227,7 @@ export default function UpdateDestination({ navigation, route }) {
                 pinColor={PICKUP_MARKER_COLOR}
                 coordinate={pickupCoordinates}
                 title="Pickup"
-                // draggable
+                draggable
                 onDragEnd={(event) => handleMarkerDragEnd(event, "pickup")}
               />
             )}
@@ -226,7 +247,7 @@ export default function UpdateDestination({ navigation, route }) {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   formContainer: {
@@ -237,7 +258,6 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     paddingHorizontal: 20,
     backgroundColor: "fff",
-    paddingTop: 70,
   },
   locationInputContainer: {
     marginBottom: 65,
@@ -276,6 +296,7 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(16),
     borderRadius: 18,
     borderWidth: 0.5,
-    paddingHorizontal: 10,
   },
 });
+
+export default LocationMap;

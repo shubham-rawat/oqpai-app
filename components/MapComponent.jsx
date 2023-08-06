@@ -2,258 +2,114 @@ import { useState, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
-
-const initialRegion = {
-  latitude: 37.78825,
-  longitude: -122.4324,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
-
-const initialMarker = {
-  coords: {
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  },
-  title: "Pick Up",
-  desc: "Pick up location",
-};
-
-const MAP_STYLE = [
-  {
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#d7e7ff",
-      },
-    ],
-  },
-  {
-    elementType: "labels.icon",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#616161",
-      },
-    ],
-  },
-  {
-    elementType: "labels.text.stroke",
-    stylers: [
-      {
-        color: "#f5f5f5",
-      },
-    ],
-  },
-  {
-    featureType: "administrative.land_parcel",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#bdbdbd",
-      },
-    ],
-  },
-  {
-    featureType: "poi",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#eeeeee",
-      },
-    ],
-  },
-  {
-    featureType: "poi",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#757575",
-      },
-    ],
-  },
-  {
-    featureType: "poi.park",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#e5e5e5",
-      },
-    ],
-  },
-  {
-    featureType: "poi.park",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#9e9e9e",
-      },
-    ],
-  },
-  {
-    featureType: "road",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#ffffff",
-      },
-    ],
-  },
-  {
-    featureType: "road.arterial",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#757575",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#dadada",
-      },
-    ],
-  },
-  {
-    featureType: "road.highway",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#616161",
-      },
-    ],
-  },
-  {
-    featureType: "road.local",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#9e9e9e",
-      },
-    ],
-  },
-  {
-    featureType: "transit.line",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#e5e5e5",
-      },
-    ],
-  },
-  {
-    featureType: "transit.station",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#eeeeee",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry",
-    stylers: [
-      {
-        color: "#0b6efd",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "labels.text.fill",
-    stylers: [
-      {
-        color: "#9e9e9e",
-      },
-    ],
-  },
-];
-
-const myPlace = {
-  type: "FeatureCollection",
-  features: [
-    {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "Point",
-        coordinates: [64.165329, 48.844287],
-      },
-    },
-  ],
-};
+import {
+  DROP_MARKER_COLOR,
+  MAP_STYLE,
+  PICKUP_MARKER_COLOR,
+} from "../constants/MapConstants";
 
 export default function MapComponent() {
-  const [region, setRegion] = useState(initialRegion);
-  const [markers, setMarkers] = useState([initialMarker]);
+  const [markers, setMarkers] = useState([]);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      setRegion({
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
-      });
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location.coords);
+      } catch (error) {
+        setErrorMsg(`Error getting location: ${error}`);
+      }
     })();
   }, []);
 
+  useEffect(() => {
+    // Update the initial region once the location is available
+    if (location) {
+      setMarkers([
+        {
+          id: 1,
+          title: "Pick Up",
+          desc: "Pick up location",
+          coordinate: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          color: PICKUP_MARKER_COLOR,
+        },
+        {
+          id: 2,
+          title: "Drop Off",
+          desc: "Drop location",
+          coordinate: {
+            latitude: location.latitude + 0.001,
+            longitude: location.longitude + 0.001,
+          },
+          color: DROP_MARKER_COLOR,
+        },
+      ]);
+    }
+  }, [location]);
+
+  const handleMarkerDrag = (markerId, coordinate) => {
+    // Update the position of the dragged marker
+    setMarkers((prevMarkers) =>
+      prevMarkers.map((marker) =>
+        marker.id === markerId ? { ...marker, coordinate } : marker
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <MapView
-        // region={region}
-        initialRegion={region}
-        onRegionChange={(newRegion) => setRegion({ newRegion })}
-        style={styles.map}
-        provider={PROVIDER_GOOGLE}
-        minZoomLevel={15}
-        customMapStyle={MAP_STYLE}
-      >
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            draggable
-            coordinate={marker.coords}
-            title={marker.title}
-            description={marker.desc}
-            pinColor="#0b6efd"
-            onDragEnd={(e) => alert(JSON.stringify(e.nativeEvent.coordinate))}
-          />
-        ))}
-      </MapView>
+      {location ? (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          provider={PROVIDER_GOOGLE}
+          minZoomLevel={10}
+          customMapStyle={MAP_STYLE}
+          loadingEnabled={true}
+        >
+          {markers.map((marker) => (
+            <Marker
+              key={marker.id}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              pinColor={marker.color}
+              draggable
+              onDragEnd={(e) =>
+                handleMarkerDrag(marker.id, e.nativeEvent.coordinate)
+              }
+            />
+          ))}
+        </MapView>
+      ) : (
+        <Text>Loading...</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 350,
-    borderRadius: 20,
+    height: "auto",
+    aspectRatio: 1 / 1,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    marginTop: 20,
   },
   map: {
     width: "100%",
