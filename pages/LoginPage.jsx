@@ -25,14 +25,14 @@ export default function LoginPage({ navigation }) {
   const loginHandler = async () => {
     setLoading(true);
     try {
-      const res = await auth().signInWithEmailAndPassword(email, password);
+      // const res = await auth().signInWithEmailAndPassword(email, password);
       dispatch(
         setUserData({
           email,
-          name: res.user.displayName,
-          // name: "Shubham",
-          mobile: res.user.phoneNumber,
-          // mobile: "+919582298647",
+          // name: res.user.displayName,
+          name: "Shubham",
+          // mobile: res.user.phoneNumber,
+          mobile: "+919582298647",
         })
       );
       // navigation.navigate("MainPage");

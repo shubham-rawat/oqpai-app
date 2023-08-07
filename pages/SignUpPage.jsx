@@ -15,6 +15,7 @@ import { getFontSize } from "../utils/FontScaling";
 
 export default function SignUpPage({ navigation }) {
   const [name, setName] = useState("");
+  const [lname, setLname] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [pass1, setPass1] = useState("");
@@ -27,7 +28,6 @@ export default function SignUpPage({ navigation }) {
       if (validateForm()) {
         const res = await auth().createUserWithEmailAndPassword(email, pass1);
         await auth().currentUser.updateProfile({ displayName: name });
-        alert(auth().currentUser.email);
         navigation.navigate("VerifyPhone", { email, mobile, name });
       }
     } catch (error) {
@@ -72,7 +72,13 @@ export default function SignUpPage({ navigation }) {
           <TextField
             value={name}
             onChangeText={setName}
-            placeholder="Name"
+            placeholder="First Name"
+            autoCapitalize="words"
+          />
+          <TextField
+            value={lname}
+            onChangeText={setLname}
+            placeholder="Last Name"
             autoCapitalize="words"
           />
           <TextField

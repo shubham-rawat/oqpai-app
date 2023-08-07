@@ -73,8 +73,8 @@ export default function UpdateDestination({ navigation, route }) {
         // Setting default location for drop marker
         setDropCoordinates({
           // Adding 0.01 to simulate a slightly different location
-          latitude: latitude + 0.01,
-          longitude,
+          latitude: latitude + 0.001,
+          longitude: longitude + 0.001,
         });
       } catch (error) {
         console.error("Error fetching current location:", error);

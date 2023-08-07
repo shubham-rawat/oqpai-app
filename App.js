@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { PermissionsAndroid, Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import messaging from "@react-native-firebase/messaging";
 // redux
 import { store } from "./store/store";
 import { Provider, useSelector } from "react-redux";
@@ -27,6 +28,63 @@ function App() {
   getValueFor("hideSlides").then((res) => setHideSlides(res));
   const { isLoggedIn } = useSelector((state) => state.userData);
 
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log("Authorization status:", authStatus);
+    }
+  }
+
+  //   PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+  //   );
+  // }
+
+  // useEffect(() => {
+  //   if (requestUserPermission()) {
+  //     messaging()
+  //       .getToken()
+  //       .then((token) => {
+  //         console.log(token);
+  //       });
+  //     .catch((reason) => {
+  //       console.log(reason);
+  //     });
+  //   } else {
+  //     console.log("Failed Permissions");
+  //   }
+  //   // initial notif
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(async (remoteMessage) => {
+  //       if (remoteMessage) {
+  //         console.log(
+  //           "Notification caused app to open from quit state:",
+  //           remoteMessage.notification
+  //         );
+  //       }
+  //     });
+  //   // Assume a message-notification contains a "type" property in the data payload of the screen to open
+  //   messaging().onNotificationOpenedApp(async (remoteMessage) => {
+  //     console.log(
+  //       "Notification caused app to open from background state:",
+  //       remoteMessage.notification
+  //     );
+  //   });
+  //   // Register background handler
+  //   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  //     console.log("Message handled in the background!", remoteMessage);
+  //   });
+  //   // foreground
+  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+  //     Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+  //   });
+  //   return unsubscribe;
+  // }, []);
   const initialRouteName = !hideSlides
     ? "InroSlides"
     : !isLoggedIn
