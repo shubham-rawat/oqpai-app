@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: "S J Patra",
-  email: "sj@email.com",
-  mobile: "+91 7654768934",
+  name: "",
+  email: "",
+  mobile: "",
   location: {
     pickup: "",
     drop: "",

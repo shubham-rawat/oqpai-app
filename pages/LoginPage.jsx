@@ -13,6 +13,8 @@ import CustomModal from "../components/CustomModal";
 import TextField from "../components/TextField";
 import ForgotPassword from "./ForgotPassword";
 import { getFontSize } from "../utils/FontScaling";
+import { saveFcmToken } from "../apis/userApi";
+import { getValueFor } from "../utils/SecureDataStoreUtils";
 
 export default function LoginPage({ navigation }) {
   const dispatch = useDispatch();
@@ -23,19 +25,23 @@ export default function LoginPage({ navigation }) {
   const [forgot, setForgot] = useState(false);
 
   const loginHandler = async () => {
-    setLoading(true);
+    if (!email || !password) {
+      alert("Please provide the credentials");
+      return;
+    }
     try {
+      setLoading(true);
       const res = await auth().signInWithEmailAndPassword(email, password);
+      console.log("Saving FCM");
+      const msg = await saveFcmToken(email, await getValueFor("fcmToken"));
+      console.log(msg);
       dispatch(
         setUserData({
           email,
           name: res.user.displayName,
-          // name: "Shubham",
           mobile: res.user.phoneNumber,
-          // mobile: "+919582298647",
         })
       );
-      // navigation.navigate("MainPage");
     } catch (error) {
       alert("Invalid Email or Password");
       setEmail("");

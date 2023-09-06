@@ -17,9 +17,11 @@ import auth from "@react-native-firebase/auth";
 import Button from "../components/Button";
 import OTPInput from "../components/OTPInput";
 import { getFontSize } from "../utils/FontScaling";
+import { registerUser } from "../apis/userApi";
+import { getValueFor } from "../utils/SecureDataStoreUtils";
 
 export default function VerifyPhone({ route, navigation }) {
-  const { email, mobile, name } = route.params;
+  const { email, mobile, name, lastName } = route.params;
   const otpLength = 6;
   const [otp, setOtp] = useState(Array(otpLength).fill(""));
   const [confirm, setConfirm] = useState(null);
@@ -40,6 +42,16 @@ export default function VerifyPhone({ route, navigation }) {
           mobile: userData.user.phoneNumber,
         })
       );
+      const res = await registerUser({
+        firstName: name,
+        lastName: lastName,
+        username: email,
+        phoneNumber: mobile,
+        hash: "",
+        city: "Delhi",
+        fcm_token: await getValueFor("fcmToken"),
+      });
+      console.log("here", JSON.stringify(res));
     } catch (error) {
       if (error.code == "auth/invalid-verification-code") {
         alert("Invalid code.");
@@ -49,18 +61,25 @@ export default function VerifyPhone({ route, navigation }) {
     }
   };
 
+  const cancelVerification = async () => {
+    await auth().currentUser.delete();
+    navigation.navigate("SignUpPage");
+  };
+
   const sendOtp = async () => {
     const confirmation = await auth().verifyPhoneNumber(`+91${mobile}`);
     setConfirm(confirmation);
   };
 
-  useEffect(sendOtp, []);
+  useEffect(() => {
+    sendOtp();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
-        <Pressable onPress={() => navigation.goBack()}>
+        <Pressable onPress={cancelVerification}>
           <AntDesign name="arrowleft" size={24} color="black" />
         </Pressable>
         <Text style={styles.title}>Verify Phone</Text>
@@ -74,6 +93,12 @@ export default function VerifyPhone({ route, navigation }) {
           height={60}
           theme="primary"
           onPress={handleVerifyOtp}
+        />
+        <Button
+          label={"Change Mobile Number"}
+          height={60}
+          theme="secondary"
+          onPress={cancelVerification}
         />
       </View>
     </SafeAreaView>

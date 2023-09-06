@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { Alert, PermissionsAndroid } from "react-native";
 // redux
 import { store } from "./store/store";
 import { Provider, useSelector } from "react-redux";
-import { getValueFor } from "./utils/SecureDataStoreUtils";
+import { getValueFor, saveValue } from "./utils/SecureDataStoreUtils";
 
 // navigation routes
 import LoginPage from "./pages/LoginPage";
@@ -20,12 +20,66 @@ import EtaPage from "./pages/EtaPage";
 import UpdateDestination from "./pages/UpdateDestination";
 import LocationMap from "./pages/LocationMap";
 
+import messaging from "@react-native-firebase/messaging";
+import ContactPage from "./pages/ContactPage";
 const Stack = createNativeStackNavigator();
 
 function App() {
   const [hideSlides, setHideSlides] = useState("");
   getValueFor("hideSlides").then((res) => setHideSlides(res));
   const { isLoggedIn } = useSelector((state) => state.userData);
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log("Authorization status:", authStatus);
+    }
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    );
+  }
+
+  useEffect(() => {
+    if (requestUserPermission()) {
+      messaging()
+        .getToken()
+        .then(async (token) => await saveValue("fcmToken", token))
+        .catch((reason) => console.log(reason));
+    } else {
+      console.log("Failed to get token");
+    }
+    // initial notif
+    messaging()
+      .getInitialNotification()
+      .then(async (remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            "Notification caused app to open from quit state:",
+            remoteMessage.notification
+          );
+        }
+      });
+    // Assume a message-notification contains a "type" property in the data payload of the screen to open
+    messaging().onNotificationOpenedApp(async (remoteMessage) => {
+      console.log(
+        "Notification caused app to open from background state:",
+        remoteMessage.notification
+      );
+    });
+    // Register background handler
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+    });
+    // foreground
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
+    return unsubscribe;
+  }, []);
 
   const initialRouteName = !hideSlides
     ? "InroSlides"
@@ -94,6 +148,11 @@ function App() {
               <Stack.Screen
                 name="LocationMap"
                 component={LocationMap}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="ContactPage"
+                component={ContactPage}
                 options={{ animation: "slide_from_right" }}
               />
             </>

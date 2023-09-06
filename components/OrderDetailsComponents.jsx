@@ -92,7 +92,7 @@ export function HoldingTimeComponent({ pickDateTime, dropDateTime }) {
   );
 }
 
-export function BillingComponent() {
+export function BillingComponent({ cost, tax }) {
   return (
     <View style={[styles.sectionContainer, { backgroundColor: "#F0FBFD" }]}>
       <View style={styles.billigLableContainer}>
@@ -110,28 +110,28 @@ export function BillingComponent() {
             { fontSize: getFontSize(14), color: "#3C3C3C" },
           ]}
         >
-          ₹120
+          ₹{cost - tax - 100}
         </Text>
       </View>
       <View style={styles.billigLableContainer}>
         <Text style={styles.billigLable}>Delivery fee</Text>
-        <Text style={styles.billigLable}>₹38</Text>
+        <Text style={styles.billigLable}>₹50</Text>
       </View>
       <View style={styles.billigLableContainer}>
         <Text style={styles.billigLable}>Taxes and charges</Text>
-        <Text style={styles.billigLable}>₹18.96</Text>
+        <Text style={styles.billigLable}>₹{tax}</Text>
       </View>
       <View style={styles.billigLableContainer}>
         <Text style={styles.billigLable}>Service fee</Text>
-        <Text style={styles.billigLable}>₹10</Text>
+        <Text style={styles.billigLable}>₹100</Text>
       </View>
       <View style={styles.billigLableContainer}>
         <Text style={[styles.billigLable, { color: "#32CD99" }]}>Discount</Text>
-        <Text style={[styles.billigLable, { color: "#32CD99" }]}>-₹16</Text>
+        <Text style={[styles.billigLable, { color: "#32CD99" }]}>-₹50</Text>
       </View>
       <View style={styles.billigLableContainer}>
         <Text style={styles.billingTotal}>Grand Total</Text>
-        <Text style={styles.billingTotal}>₹170.96</Text>
+        <Text style={styles.billingTotal}>₹{cost}</Text>
       </View>
     </View>
   );
@@ -152,6 +152,20 @@ export function DriverDetails() {
           <Text style={styles.label}>Mobile Number</Text>
           <Text style={styles.labelData}>+91 9865646365</Text>
         </View>
+      </View>
+    </View>
+  );
+}
+
+export function DropDateTimeComponent({ date, time }) {
+  return (
+    <View style={styles.sectionContainer}>
+      <View style={styles.holdingTimeHeadingContainer}>
+        <Text style={styles.sectionHeading}>Drop Off Date Time</Text>
+      </View>
+      <View style={styles.dateTimeContainer}>
+        <Text style={styles.dateTimeData}>{date}</Text>
+        <Text style={styles.dateTimeData}>{time}</Text>
       </View>
     </View>
   );

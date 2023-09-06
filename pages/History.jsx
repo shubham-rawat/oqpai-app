@@ -1,85 +1,43 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import HistoryComponent from "../components/HistoryComponent";
 import { getFontSize } from "../utils/FontScaling";
 import { ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+import { pastOrders } from "../apis/userApi";
+import { useSelector } from "react-redux";
 
 export default function History({ navigation }) {
-  const orderData = {
-    location: {
-      pickup: "Bikaner",
-      drop: "Ajmer",
-    },
-    dateTime: {
-      pickup: new Date(),
-      drop: new Date(),
-    },
-    bags: "1",
+  const data = useSelector((state) => state.userData);
+  const [historyData, setHistoryData] = useState([]);
+  useEffect(() => {
+    (async () => {
+      let tempdata = await pastOrders(data.email);
+      console.log(tempdata);
+      setHistoryData([...tempdata]);
+      console.log("updated history data");
+    })();
+  }, []);
+
+  const onPressCurrent = (currentRequestId) => {
+    console.log(currentRequestId);
+    navigation.navigate("UpdateOrder", { currentRequestId });
   };
-  const onPressCurrent = () => {
-    navigation.navigate("UpdateOrder", { orderData });
-  };
+
   return (
     <ScrollView>
-      <Text style={styles.heading}>Your recent drop outs</Text>
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-        onPress={onPressCurrent}
-        isCurrent={true}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
-      <HistoryComponent
-        amount={200}
-        pickupCity={"Bikaner"}
-        pickupAddress={"Noon Bazar, 765111"}
-        dropCity={"Ajmer"}
-        dropAddress={"Raja Chandar Singh Nagar, 765199"}
-      />
+      <Text style={styles.heading}>Your recent drop offs</Text>
+      {historyData?.map((data, idx) => (
+        <HistoryComponent
+          amount={data.total_cost}
+          // pickupCity={"Bikaner"}
+          pickupAddress={data.pickup_text_address}
+          // dropCity={"Ajmer"}
+          dropAddress={data.destination_text_address}
+          onPress={idx === 0 ? () => onPressCurrent(data.request_id) : () => {}}
+          isCurrent={idx === 0}
+          key={data.request_id}
+        />
+      ))}
     </ScrollView>
   );
 }

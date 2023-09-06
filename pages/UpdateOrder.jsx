@@ -17,13 +17,44 @@ import {
   LocationComponent,
   HoldingTimeComponent,
   BillingComponent,
+  DropDateTimeComponent,
 } from "../components/OrderDetailsComponents";
+import { useEffect, useState } from "react";
+import { orderDetails, requestDropOff } from "../apis/userApi";
+import { combineDateTime } from "../utils/DateTimeUtils";
 
 export default function UpdateOrder({ navigation, route }) {
-  const { orderData } = route.params;
-  const dropNow = () => {};
+  const { currentRequestId } = route.params;
+  const [orderData, setOrderData] = useState({});
+  const [loading, setLoading] = useState(false);
+  // set the order data
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        let tempdata = await orderDetails(currentRequestId);
+        console.log(tempdata);
+        setOrderData(tempdata);
+        console.log("set the current order data");
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const dropNow = async () => {
+    try {
+      const res = await requestDropOff(currentRequestId);
+      console.log(res);
+      navigation.navigate("EtaPage", { requestId: currentRequestId });
+    } catch (error) {
+      alert("Something went wrong");
+    }
+  };
   const updateDrop = () => {
-    navigation.navigate("UpdateDestination", { orderData });
+    navigation.navigate("UpdateDestination", { orderData, currentRequestId });
   };
 
   return (
@@ -37,18 +68,18 @@ export default function UpdateOrder({ navigation, route }) {
       </View>
       <ScrollView contentContainerStyle={styles.bodyContainer}>
         <BagDetailsComponent
-          numberOfBags={orderData?.bags}
+          numberOfBags={orderData?.number_of_bags}
           packageName={"Daily Package"}
         />
         <LocationComponent
-          pickupLocation={orderData?.location.pickup}
-          dropLocation={orderData?.location.drop}
+          pickupLocation={orderData?.pickup_text_address}
+          dropLocation={orderData?.destination_text_address}
         />
-        <HoldingTimeComponent
-          pickDateTime={orderData?.dateTime.pickup}
-          dropDateTime={orderData?.dateTime.drop}
+        <DropDateTimeComponent
+          date={orderData?.destination_date}
+          time={orderData?.destination_time}
         />
-        <BillingComponent />
+        <BillingComponent cost={orderData?.total_cost} tax={0} />
       </ScrollView>
       <View style={styles.bottomContainer}>
         <Button

@@ -18,8 +18,10 @@ import {
 } from "../components/OrderDetailsComponents";
 import Button from "../components/Button";
 import { clearFormData } from "../store/userDataSlice";
+import { orderDetails } from "../apis/userApi";
 
-export default function EtaPage({ navigation }) {
+export default function EtaPage({ navigation, route }) {
+  const { requestId } = route.params;
   const data = useSelector((state) => state.userData);
   const [loading, setLoading] = useState(true);
   const [timer, setTimer] = useState({
@@ -29,13 +31,15 @@ export default function EtaPage({ navigation }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    const interval = setInterval(async () => {
+      const driverData = await orderDetails(requestId);
+      console.log("name of driver", driverData.username_of_driver);
+      if (driverData.username_of_driver) {
+        setLoading(false);
+      }
+    }, 30000);
 
-    return () => {
-      clearTimeout(timeout);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

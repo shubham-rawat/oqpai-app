@@ -11,8 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { removeUserData } from "../store/userDataSlice";
 import { getFontSize } from "../utils/FontScaling";
+import Button from "../components/Button";
 
-export default function Profile() {
+export default function Profile({ navigation }) {
   const userData = useSelector((state) => state.userData);
   const dispatch = useDispatch();
 
@@ -66,7 +67,7 @@ export default function Profile() {
             {userData.mobile}
           </Text>
         </View>
-        <View
+        {/* <View
           style={{
             padding: 10,
             alignItems: "flex-end",
@@ -91,8 +92,12 @@ export default function Profile() {
           >
             61
           </Text>
-        </View>
+        </View> */}
       </View>
+      <Button
+        label={"Contact Us"}
+        onPress={() => navigation.navigate("ContactPage")}
+      />
     </View>
   );
 }

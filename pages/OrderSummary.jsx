@@ -19,11 +19,20 @@ import {
   HoldingTimeComponent,
   BillingComponent,
 } from "../components/OrderDetailsComponents";
+import { placeNewOrder } from "../apis/userApi";
 
-export default function OrderSummary({ navigation }) {
+export default function OrderSummary({ route, navigation }) {
+  const { cost, tax, requestId } = route.params;
   const data = useSelector((state) => state.userData);
-  const placeOrder = () => {
-    navigation.navigate("EtaPage");
+  const placeOrder = async () => {
+    console.log(requestId);
+    try {
+      const res = await placeNewOrder(requestId);
+      console.log(res);
+      navigation.navigate("EtaPage", { requestId });
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
@@ -48,7 +57,7 @@ export default function OrderSummary({ navigation }) {
           pickDateTime={data?.dateTime.pickup}
           dropDateTime={data?.dateTime.drop}
         />
-        <BillingComponent />
+        <BillingComponent cost={cost} tax={tax} />
       </ScrollView>
       <View style={styles.bottomContainer}>
         <Button
