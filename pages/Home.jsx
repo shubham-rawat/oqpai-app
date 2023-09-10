@@ -1,5 +1,5 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
 // pages
 import LuggageLocation from "./LuggageLocation";
 import BagsPage from "./BagsPage";
@@ -35,7 +35,6 @@ export default function Home() {
           options={{ animation: "fade" }}
         />
       </Stack.Navigator>
-      <StatusBar style="auto" />
     </>
   );
 }

@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import CustomDateTimePicker from "../components/CustomDateTimePicker";
 import { getFontSize } from "../utils/FontScaling";
+import { BAGS_LIMIT_EXCEEDED } from "../constants/ErrorMessages";
 
 export default function BagsPage({ navigation }) {
   const [bags, setBags] = useState();
@@ -17,7 +18,7 @@ export default function BagsPage({ navigation }) {
 
   const handleContinue = () => {
     if (bags > 2 || bags < 1) {
-      alert("Number of bags should be 1 or 2");
+      alert(BAGS_LIMIT_EXCEEDED);
     } else {
       const dropDateTime = combineDateTime(date, time);
       const pickupDateTime = new Date();

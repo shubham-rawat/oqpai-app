@@ -14,6 +14,7 @@ import { getFontSize } from "../utils/FontScaling";
 import Button from "../components/Button";
 import MiniLogo from "../assets/mini_logo.svg";
 import { concatAsCSV } from "../utils/TextUtils";
+import { LOCATION_NOT_SET } from "../constants/ErrorMessages";
 
 const LocationMap = ({ navigation }) => {
   const [region, setRegion] = useState(null);
@@ -28,7 +29,7 @@ const LocationMap = ({ navigation }) => {
     const pickup = pickupGooglePlacesRef.current?.getAddressText();
     const drop = dropGooglePlacesRef.current?.getAddressText();
     if (!drop || !pickup) {
-      Alert.alert("Missing Data", "Set the locations first");
+      Alert.alert("Missing Data", LOCATION_NOT_SET);
     } else {
       dispatch(
         setLocation({

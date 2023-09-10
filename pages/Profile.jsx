@@ -5,25 +5,35 @@ import {
   TouchableHighlight,
   Image,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import auth from "@react-native-firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { removeUserData } from "../store/userDataSlice";
 import { getFontSize } from "../utils/FontScaling";
+import Button from "../components/Button";
+import { removeKey } from "../utils/SecureDataStoreUtils";
+import {
+  LOGIN_STORE_KEY,
+  USEREMAIL_STORE_KEY,
+  USERMOBILE_STORE_KEY,
+  USERNAME_STORE_KEY,
+} from "../constants/AllConstants";
 
-export default function Profile() {
+export default function Profile({ navigation }) {
   const userData = useSelector((state) => state.userData);
   const dispatch = useDispatch();
 
-  const logouthandler = () => {
+  const logouthandler = async () => {
+    await removeKey(LOGIN_STORE_KEY);
+    await removeKey(USEREMAIL_STORE_KEY);
+    await removeKey(USERNAME_STORE_KEY);
+    await removeKey(USERMOBILE_STORE_KEY);
     auth().signOut();
     dispatch(removeUserData());
   };
 
   return (
     <View style={styles.profileContainer}>
-      <StatusBar style="auto" />
       <Ionicons
         name="ios-log-out-outline"
         size={42}
@@ -66,7 +76,7 @@ export default function Profile() {
             {userData.mobile}
           </Text>
         </View>
-        <View
+        {/* <View
           style={{
             padding: 10,
             alignItems: "flex-end",
@@ -91,8 +101,12 @@ export default function Profile() {
           >
             61
           </Text>
-        </View>
+        </View> */}
       </View>
+      <Button
+        label={"Contact Us"}
+        onPress={() => navigation.navigate("ContactPage")}
+      />
     </View>
   );
 }

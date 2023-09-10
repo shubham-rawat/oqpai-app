@@ -26,11 +26,11 @@ export default function HistoryComponent({
           </View>
           <View style={styles.textSection}>
             <View>
-              <Text style={styles.label}>{pickupCity}</Text>
+              {/* <Text style={styles.label}>{pickupCity}</Text> */}
               <Text style={styles.labelData}>{pickupAddress}</Text>
             </View>
             <View>
-              <Text style={styles.label}>{dropCity}</Text>
+              {/* <Text style={styles.label}>{dropCity}</Text> */}
               <Text style={styles.labelData}>{dropAddress}</Text>
             </View>
           </View>

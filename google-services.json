@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "819540597123",
+    "project_id": "oqpai-4e758",
+    "storage_bucket": "oqpai-4e758.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819540597123:android:649ddc17b1031397dd7eb6",
+        "android_client_info": {
+          "package_name": "com.shubhrawat.oqpaiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819540597123-oimv0b2m05damtg97palk8qjf9ca7so2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shubhrawat.oqpaiapp",
+            "certificate_hash": "9bfec02650254685f8ae58cfee6f84e1b8011b64"
+          }
+        },
+        {
+          "client_id": "819540597123-ruk607q9poqr628h53tl3qmt21c8t0p0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shubhrawat.oqpaiapp",
+            "certificate_hash": "08da493e65004ae2158ca42ce139bce5dfd1e00e"
+          }
+        },
+        {
+          "client_id": "819540597123-jcvn26uunr7t7dl3h5g3rjuneo9j4shl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkP-Vn7Qc1lhuneEt4Bto8l8B6UP42QnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819540597123-jcvn26uunr7t7dl3h5g3rjuneo9j4shl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

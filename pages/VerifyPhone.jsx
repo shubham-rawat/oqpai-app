@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,8 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../store/userDataSlice";
 // firebase authentication
 import auth from "@react-native-firebase/auth";
@@ -17,50 +16,100 @@ import auth from "@react-native-firebase/auth";
 import Button from "../components/Button";
 import OTPInput from "../components/OTPInput";
 import { getFontSize } from "../utils/FontScaling";
+import { registerUser } from "../apis/userApi";
+import { saveValue } from "../utils/SecureDataStoreUtils";
+import {
+  LOGGED_IN_VALUE,
+  LOGIN_STORE_KEY,
+  USEREMAIL_STORE_KEY,
+  USERMOBILE_STORE_KEY,
+  USERNAME_STORE_KEY,
+} from "../constants/AllConstants";
+import {
+  FIREBASE_LINKING_ERROR,
+  INVALID_CODE,
+  UNKNOWN_ERROR,
+} from "../constants/ErrorMessages";
+import { ActivityIndicator } from "react-native";
 
 export default function VerifyPhone({ route, navigation }) {
-  const { email, mobile, name } = route.params;
+  const { email, mobile, name, lastName } = route.params;
   const otpLength = 6;
   const [otp, setOtp] = useState(Array(otpLength).fill(""));
   const [confirm, setConfirm] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { fcmToken } = useSelector((state) => state.userData);
 
   const dispatch = useDispatch();
 
   const handleVerifyOtp = async () => {
+    setLoading(true);
     try {
       const credential = auth.PhoneAuthProvider.credential(
         confirm.verificationId,
         otp.join("")
       );
-      let userData = await auth().currentUser.linkWithCredential(credential);
-      dispatch(
-        setUserData({
-          email: email,
-          name: name,
-          mobile: userData.user.phoneNumber,
-        })
-      );
+      // link the verified phone number to the user
+      await auth().currentUser.linkWithCredential(credential);
+      try {
+        // registering the user in the backend
+        const res = await registerUser({
+          firstName: name,
+          lastName: lastName,
+          username: email,
+          phoneNumber: mobile,
+          hash: "",
+          city: "",
+          fcm_token: fcmToken,
+        });
+        console.log(res);
+        // saving the value locally
+        await saveValue(LOGIN_STORE_KEY, LOGGED_IN_VALUE);
+        await saveValue(USEREMAIL_STORE_KEY, email);
+        await saveValue(USERNAME_STORE_KEY, name);
+        await saveValue(USERMOBILE_STORE_KEY, mobile);
+        dispatch(
+          setUserData({
+            email: email,
+            name: name,
+            mobile: mobile,
+            isLoggedIn: LOGGED_IN_VALUE,
+          })
+        );
+      } catch (error) {
+        console.log(error);
+        alert(UNKNOWN_ERROR);
+      }
     } catch (error) {
       if (error.code == "auth/invalid-verification-code") {
-        alert("Invalid code.");
+        alert(INVALID_CODE);
       } else {
-        console.log("Account linking error");
+        console.log(FIREBASE_LINKING_ERROR);
       }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const cancelVerification = async () => {
+    await auth().currentUser.delete();
+    navigation.navigate("SignUpPage");
   };
 
   const sendOtp = async () => {
     const confirmation = await auth().verifyPhoneNumber(`+91${mobile}`);
+    console.log("sent!");
     setConfirm(confirmation);
   };
 
-  useEffect(sendOtp, []);
+  useEffect(() => {
+    sendOtp();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
-        <Pressable onPress={() => navigation.goBack()}>
+        <Pressable onPress={cancelVerification}>
           <AntDesign name="arrowleft" size={24} color="black" />
         </Pressable>
         <Text style={styles.title}>Verify Phone</Text>
@@ -68,14 +117,24 @@ export default function VerifyPhone({ route, navigation }) {
       <View style={styles.bodyContainer}>
         <OTPInput otp={otp} setOtp={setOtp} otpLength={otpLength} />
       </View>
-      <View style={styles.bottomContainer}>
-        <Button
-          label={"Verify"}
-          height={60}
-          theme="primary"
-          onPress={handleVerifyOtp}
-        />
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0B6EFD" />
+      ) : (
+        <View style={styles.bottomContainer}>
+          <Button
+            label={"Verify"}
+            height={60}
+            theme="primary"
+            onPress={handleVerifyOtp}
+          />
+          <Button
+            label={"Change Mobile Number"}
+            height={60}
+            theme="secondary"
+            onPress={cancelVerification}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 }

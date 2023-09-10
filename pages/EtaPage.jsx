@@ -8,9 +8,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { getFontSize } from "../utils/FontScaling";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   BagDetailsComponent,
   DriverDetails,
@@ -18,44 +17,25 @@ import {
 } from "../components/OrderDetailsComponents";
 import Button from "../components/Button";
 import { clearFormData } from "../store/userDataSlice";
+import { orderDetails } from "../apis/userApi";
+import CountdownTimer from "../components/CountdownTimer";
 
-export default function EtaPage({ navigation }) {
-  const data = useSelector((state) => state.userData);
+export default function EtaPage({ navigation, route }) {
+  const { requestId } = route.params;
   const [loading, setLoading] = useState(true);
-  const [timer, setTimer] = useState({
-    min: 15,
-    sec: 64,
-  });
+  const [driver, setDriver] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => {
-        if (prevTimer.sec > 0) {
-          return { min: prevTimer.min, sec: prevTimer.sec - 1 };
-        } else if (prevTimer.sec === 0) {
-          return { min: prevTimer.min - 1, sec: 59 };
-        }
-        if (prevTimer.min === 0 && prevTimer.sec === 0) {
-          clearInterval(interval);
-          return prevTimer;
-        }
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    const interval = setInterval(async () => {
+      const driverData = await orderDetails(requestId);
+      console.log("driver data updated", driverData);
+      if (driverData.username_of_driver) {
+        setDriver({ ...driverData });
+        setLoading(false);
+      }
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const backToHome = () => {
@@ -65,7 +45,6 @@ export default function EtaPage({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       {loading ? (
         <>
           <ActivityIndicator size={"large"} color={"grey"} />
@@ -79,22 +58,20 @@ export default function EtaPage({ navigation }) {
           <ScrollView contentContainerStyle={styles.bodyContainer}>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionHeading}>ETA</Text>
-              <Text style={styles.timerContainer}>
-                {timer.min} : {timer.sec}
-              </Text>
+              <CountdownTimer countdownSeconds={driver.eta_time} />
             </View>
             <BagDetailsComponent
-              numberOfBags={data?.bags}
+              numberOfBags={driver?.number_of_bags}
               packageName={"Daily Package"}
             />
             <LocationComponent
-              pickupLocation={data?.location.pickup}
-              dropLocation={data?.location.drop}
+              pickupLocation={driver?.pickup_text_address}
+              dropLocation={driver?.destination_text_address}
             />
-            <DriverDetails />
+            <DriverDetails name={driver?.firstname_of_driver} />
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionHeading}>OTP</Text>
-              <Text style={styles.timerContainer}>123456</Text>
+              <Text style={styles.timerContainer}>{driver?.otps}</Text>
             </View>
           </ScrollView>
           <View style={styles.bottomContainer}>
