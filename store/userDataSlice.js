@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: "S J Patra",
-  email: "sj@email.com",
-  mobile: "+91 7654768934",
+  name: "",
+  email: "",
+  mobile: "",
   location: {
     pickup: "",
     drop: "",
@@ -16,6 +16,7 @@ const initialState = {
   },
   bags: "",
   isLoggedIn: false,
+  fcmToken: "",
 };
 
 //user slice
@@ -27,7 +28,7 @@ export const userDataSlice = createSlice({
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.mobile = action.payload.mobile || "";
-      state.isLoggedIn = true;
+      state.isLoggedIn = action.payload.isLoggedIn;
     },
     setLocation: (state, action) => {
       state.location.pickup = action.payload.pickup;
@@ -57,6 +58,9 @@ export const userDataSlice = createSlice({
       state.dateTime.drop = "";
       state.bags = "";
     },
+    setToken: (state, action) => {
+      state.fcmToken = action.payload.fcmToken;
+    },
   },
 });
 
@@ -67,6 +71,7 @@ export const {
   setDateTime,
   removeUserData,
   clearFormData,
+  setToken,
 } = userDataSlice.actions;
 
 export default userDataSlice.reducer;

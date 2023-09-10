@@ -3,6 +3,11 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { saveValue } from "../utils/SecureDataStoreUtils";
 import { getFontSize } from "../utils/FontScaling";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  SHOW_INTRO_SLIDES_KEY,
+  SHOW_INTRO_SLIDES_VALUE,
+} from "../constants/AllConstants";
 
 const slides = [
   {
@@ -65,13 +70,32 @@ export default function IntroSlides({ navigation }) {
       </View>
     );
   };
+
+  const renderNextButton = () => {
+    return (
+      <Ionicons name="arrow-forward-circle-outline" color={"gray"} size={40} />
+    );
+  };
+
+  const renderDoneButton = () => {
+    return (
+      <Ionicons name="checkmark-circle-outline" color={"gray"} size={40} />
+    );
+  };
+
   const onDone = async () => {
-    await saveValue("hideSlides", "true");
+    await saveValue(SHOW_INTRO_SLIDES_KEY, SHOW_INTRO_SLIDES_VALUE);
     navigation.navigate("LoginPage");
   };
 
   return (
-    <AppIntroSlider renderItem={renderItem} data={slides} onDone={onDone} />
+    <AppIntroSlider
+      renderItem={renderItem}
+      renderNextButton={renderNextButton}
+      renderDoneButton={renderDoneButton}
+      data={slides}
+      onDone={onDone}
+    />
   );
 }
 

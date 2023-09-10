@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "oqpai-app",
+    "name": "OQPAI",
     "slug": "oqpai-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashscreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

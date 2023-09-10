@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getFontSize } from "../utils/FontScaling";
-import { StatusBar } from "expo-status-bar";
 // custom compnents
 import Button from "../components/Button";
 import {
@@ -17,18 +16,59 @@ import {
   LocationComponent,
   HoldingTimeComponent,
   BillingComponent,
+  DropDateTimeComponent,
 } from "../components/OrderDetailsComponents";
+import { useEffect, useState } from "react";
+import { orderDetails, requestDropOff } from "../apis/userApi";
+import { combineDateTime } from "../utils/DateTimeUtils";
+import { UNKNOWN_ERROR } from "../constants/ErrorMessages";
 
 export default function UpdateOrder({ navigation, route }) {
-  const { orderData } = route.params;
-  const dropNow = () => {};
+  const { currentRequestId } = route.params;
+  const [orderData, setOrderData] = useState({});
+  const [btnDisabled, setBtnDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // set the order data
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        let tempdata = await orderDetails(currentRequestId);
+        console.log(tempdata);
+        setOrderData(tempdata);
+      } catch (error) {
+        console.log(error);
+        alert(UNKNOWN_ERROR);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      orderData?.status !== "WAREHOUSE" && orderData?.status !== "PICKED"
+    );
+    setBtnDisabled(
+      orderData?.status !== "WAREHOUSE" && orderData?.status !== "PICKED"
+    );
+  }, [orderData]);
+
+  const dropNow = async () => {
+    try {
+      const res = await requestDropOff(currentRequestId);
+      console.log(res);
+      navigation.navigate("EtaPage", { requestId: currentRequestId });
+    } catch (error) {
+      alert(UNKNOWN_ERROR);
+    }
+  };
   const updateDrop = () => {
-    navigation.navigate("UpdateDestination", { orderData });
+    navigation.navigate("UpdateDestination", { orderData, currentRequestId });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
@@ -37,31 +77,33 @@ export default function UpdateOrder({ navigation, route }) {
       </View>
       <ScrollView contentContainerStyle={styles.bodyContainer}>
         <BagDetailsComponent
-          numberOfBags={orderData?.bags}
+          numberOfBags={orderData?.number_of_bags}
           packageName={"Daily Package"}
         />
         <LocationComponent
-          pickupLocation={orderData?.location.pickup}
-          dropLocation={orderData?.location.drop}
+          pickupLocation={orderData?.pickup_text_address}
+          dropLocation={orderData?.destination_text_address}
         />
-        <HoldingTimeComponent
-          pickDateTime={orderData?.dateTime.pickup}
-          dropDateTime={orderData?.dateTime.drop}
+        <DropDateTimeComponent
+          date={orderData?.destination_date}
+          time={orderData?.destination_time}
         />
-        <BillingComponent />
+        <BillingComponent cost={orderData?.total_cost} tax={0} />
       </ScrollView>
       <View style={styles.bottomContainer}>
         <Button
           size={60}
-          theme="primary"
+          theme={btnDisabled ? "disabled" : "primary"}
           label={"Update Drop Location"}
           onPress={updateDrop}
+          disabled={btnDisabled}
         />
         <Button
           size={60}
-          theme="primary"
+          theme={btnDisabled ? "disabled" : "primary"}
           label={"Drop Now"}
           onPress={dropNow}
+          disabled={btnDisabled}
         />
       </View>
     </SafeAreaView>

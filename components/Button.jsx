@@ -7,6 +7,7 @@ export default function Button({
   onPress,
   height = 50,
   style = {},
+  disabled = false,
 }) {
   const colorScheme = {
     background: "",
@@ -20,6 +21,10 @@ export default function Button({
       colorScheme.foreground = "#fff";
       break;
     case "secondary":
+      colorScheme.background = "#E9E9E9";
+      colorScheme.foreground = "#000";
+      break;
+    case "disabled":
       colorScheme.background = "#E9E9E9";
       colorScheme.foreground = "#000";
       break;
@@ -37,6 +42,7 @@ export default function Button({
   return (
     <View style={[styles.buttonContainer, { ...style }]}>
       <Pressable
+        disabled={disabled}
         style={[
           styles.button,
           {

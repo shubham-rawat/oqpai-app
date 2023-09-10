@@ -10,7 +10,6 @@ import {
 import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
 import { getFontSize } from "../utils/FontScaling";
-import { StatusBar } from "expo-status-bar";
 // custom compnents
 import Button from "../components/Button";
 import {
@@ -19,16 +18,25 @@ import {
   HoldingTimeComponent,
   BillingComponent,
 } from "../components/OrderDetailsComponents";
+import { placeNewOrder } from "../apis/userApi";
+import { UNKNOWN_ERROR } from "../constants/ErrorMessages";
 
-export default function OrderSummary({ navigation }) {
+export default function OrderSummary({ route, navigation }) {
+  const { cost, tax, requestId } = route.params;
   const data = useSelector((state) => state.userData);
-  const placeOrder = () => {
-    navigation.navigate("EtaPage");
+  const placeOrder = async () => {
+    try {
+      const res = await placeNewOrder(requestId);
+      console.log(res);
+      navigation.navigate("EtaPage", { requestId });
+    } catch (error) {
+      console.log(error);
+      alert(UNKNOWN_ERROR);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
@@ -48,7 +56,7 @@ export default function OrderSummary({ navigation }) {
           pickDateTime={data?.dateTime.pickup}
           dropDateTime={data?.dateTime.drop}
         />
-        <BillingComponent />
+        <BillingComponent cost={cost} tax={tax} />
       </ScrollView>
       <View style={styles.bottomContainer}>
         <Button
