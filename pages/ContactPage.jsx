@@ -5,14 +5,20 @@ import {
   View,
   Pressable,
   Dimensions,
+  Linking,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
+import { getFontSize } from "../utils/FontScaling";
 
 export default function ContactPage({ navigation }) {
+  const opneEmail = () => {
+    Linking.openURL("mailto:contact.oqpai@gmail.com");
+  };
+  const opnenDialer = () => {
+    Linking.openURL("tel:+91-9472003529");
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
@@ -20,11 +26,15 @@ export default function ContactPage({ navigation }) {
         <Text style={styles.title}>Contact Us</Text>
       </View>
       <View style={styles.bodyContainer}>
-        <Text>
-          For any queries, please write to us at contact.oqpai@gmail.com
+        <Text style={styles.msg}>For any queries, please write to us at</Text>
+        <Text onPress={opneEmail} style={[styles.msg, styles.email]}>
+          contact.oqpai@gmail.com
         </Text>
-        <Text>Or</Text>
-        <Text>Contact us at +91-9472003529</Text>
+        <Text style={styles.msg}>or</Text>
+        <Text style={styles.msg}>Contact us at</Text>
+        <Text onPress={opnenDialer} style={[styles.msg, styles.phone]}>
+          +91 9472003529
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -53,8 +63,28 @@ const styles = StyleSheet.create({
   bodyContainer: {
     display: "flex",
     width: "100%",
-    alignItems: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: "92%",
     paddingHorizontal: 20,
+  },
+  msg: {
+    fontSize: getFontSize(20),
+    marginVertical: 5,
+  },
+  email: {
+    fontWeight: 700,
+    textDecorationLine: "underline",
+    color: "dodgerblue",
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "lightgray",
+  },
+  phone: {
+    fontWeight: 700,
+    color: "dodgerblue",
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "lightgray",
   },
 });

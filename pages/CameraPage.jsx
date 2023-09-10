@@ -4,34 +4,57 @@ import TakePicture from "../components/TakePicture";
 import { getFontSize } from "../utils/FontScaling";
 import { createRequest } from "../apis/userApi";
 import { useSelector } from "react-redux";
+import { UNKNOWN_ERROR } from "../constants/ErrorMessages";
 
 export default function CameraPage({ navigation }) {
   const [photo, setPhoto] = useState(null);
   const data = useSelector((state) => state.userData);
-  const pictureSaved = () => {
-    placeOrder();
-  };
 
   const placeOrder = async () => {
+    const requestdata = new FormData();
     try {
-      const res = await createRequest({
-        username: data.email,
-        pickup_text_address: data.location.pickup,
-        destination_text_address: data.location.drop,
-        pickup_latitude: data.location.pickupCoords.latitude,
-        pickup_longitude: data.location.pickupCoords.longitude,
-        destination_latitude: data.location.dropCoords.latitude,
-        destination_longitude: data.location.dropCoords.longitude,
-        pickup_date: data.dateTime.pickup,
-        pickup_time: data.dateTime.pickup?.toLocaleTimeString("it-IT"),
-        destination_date: data.dateTime.drop,
-        destination_time: data.dateTime.drop?.toLocaleTimeString("it-IT"),
-        // bags_image: photo?.base64,
-        // bags_image:
-        //   "hdgagdagdagdagdagagdagdadagdhjgdaagdagdagjgjagdjagdjagdahjgd",
-        image: photo,
-        number_of_bags: data.bags,
+      requestdata.append("username", data.email);
+      requestdata.append("pickup_text_address", data.location.pickup);
+      requestdata.append("destination_text_address", data.location.drop);
+      requestdata.append(
+        "pickup_latitude",
+        data.location.pickupCoords.latitude
+      );
+      requestdata.append(
+        "pickup_longitude",
+        data.location.pickupCoords.longitude
+      );
+      requestdata.append(
+        "destination_latitude",
+        data.location.dropCoords.latitude
+      );
+      requestdata.append(
+        "destination_longitude",
+        data.location.dropCoords.longitude
+      );
+      requestdata.append(
+        "pickup_date",
+        data.dateTime.pickup.toLocaleDateString("it-IT")
+      );
+      requestdata.append(
+        "pickup_time",
+        data.dateTime.pickup?.toLocaleTimeString("it-IT")
+      );
+      requestdata.append(
+        "destination_date",
+        data.dateTime.drop.toLocaleDateString("it-IT")
+      );
+      requestdata.append(
+        "destination_time",
+        data.dateTime.drop?.toLocaleTimeString("it-IT")
+      );
+      requestdata.append("number_of_bags", data.bags);
+      requestdata.append("image", {
+        name: "luggage_image.jpg",
+        uri: photo.uri,
+        type: "image/jpg",
       });
+      const res = await createRequest(requestdata);
       console.log(res);
       await navigation.navigate("OrderSummary", {
         cost: res.Total_Cost,
@@ -39,7 +62,8 @@ export default function CameraPage({ navigation }) {
         requestId: res.Request_ID,
       });
     } catch (error) {
-      alert("Something went wrong!");
+      console.log(error);
+      alert(UNKNOWN_ERROR);
     }
   };
 
@@ -59,7 +83,7 @@ export default function CameraPage({ navigation }) {
       <TakePicture
         photo={photo}
         setPhoto={setPhoto}
-        pictureSaved={pictureSaved}
+        pictureSaved={placeOrder}
       />
     </View>
   );

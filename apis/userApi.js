@@ -1,14 +1,14 @@
 import axios from "axios";
 
 const PUBLIC_API = axios.create({
-  baseURL: "http://13.233.225.191:4000",
+  baseURL: "https://oqpaibackend.in",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 const FORM_API = axios.create({
-  baseURL: "http://65.1.109.223:4000",
+  baseURL: "https://oqpaibackend.in",
   headers: {
     "Content-Type": "multipart/form-data",
   },
@@ -57,37 +57,23 @@ export async function saveFcmToken(email, token) {
 
 //
 export async function createRequest(orderRequest) {
-  const {
-    username,
-    pickup_text_address,
-    destination_text_address,
-    pickup_latitude,
-    pickup_longitude,
-    destination_latitude,
-    destination_longitude,
-    destination_date,
-    destination_time,
-    bags_image,
-    number_of_bags,
-    destination_changed = false,
-    requested_dropoff = false,
-  } = orderRequest;
+  // const {
+  //   username,
+  //   pickup_text_address,
+  //   destination_text_address,
+  //   pickup_latitude,
+  //   pickup_longitude,
+  //   destination_latitude,
+  //   destination_longitude,
+  //   destination_date,
+  //   destination_time,
+  //   image,
+  //   number_of_bags,
+  //   destination_changed = false,
+  //   requested_dropoff = false,
+  // } = orderRequest;
   try {
-    const response = await PUBLIC_API.post("/users/create_request", {
-      username,
-      pickup_text_address,
-      destination_text_address,
-      pickup_latitude,
-      pickup_longitude,
-      destination_latitude,
-      destination_longitude,
-      destination_date,
-      destination_time,
-      bags_image,
-      number_of_bags,
-      destination_changed,
-      requested_dropoff,
-    });
+    const response = await FORM_API.post("/users/create_request", orderRequest);
     return response.data;
   } catch (err) {
     return err.response;

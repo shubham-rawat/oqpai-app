@@ -13,8 +13,8 @@ import { setDateTime, setLocation } from "../store/userDataSlice";
 import { getFontSize } from "../utils/FontScaling";
 import Button from "../components/Button";
 import { concatAsCSV } from "../utils/TextUtils";
-import { StatusBar } from "expo-status-bar";
 import { updateRequest } from "../apis/userApi";
+import { LOCATION_NOT_SET } from "../constants/ErrorMessages";
 
 export default function UpdateDestination({ navigation, route }) {
   const { orderData, currentRequestId } = route.params;
@@ -30,7 +30,7 @@ export default function UpdateDestination({ navigation, route }) {
   const sendLocation = async () => {
     const drop = dropGooglePlacesRef.current?.getAddressText();
     if (!drop || !pickup) {
-      Alert.alert("Missing Data", "Set the locations first");
+      Alert.alert("Missing Data", LOCATION_NOT_SET);
     } else {
       try {
         const res = await updateRequest({
@@ -178,7 +178,6 @@ export default function UpdateDestination({ navigation, route }) {
 
   return (
     <View style={styles.formContainer}>
-      <StatusBar style="auto" />
       <Text style={{ fontSize: getFontSize(24), marginBottom: 10 }}>
         Update your drop location
       </Text>

@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getFontSize } from "../utils/FontScaling";
-import { StatusBar } from "expo-status-bar";
 // custom compnents
 import Button from "../components/Button";
 import {
@@ -22,10 +21,12 @@ import {
 import { useEffect, useState } from "react";
 import { orderDetails, requestDropOff } from "../apis/userApi";
 import { combineDateTime } from "../utils/DateTimeUtils";
+import { UNKNOWN_ERROR } from "../constants/ErrorMessages";
 
 export default function UpdateOrder({ navigation, route }) {
   const { currentRequestId } = route.params;
   const [orderData, setOrderData] = useState({});
+  const [btnDisabled, setBtnDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   // set the order data
   useEffect(() => {
@@ -35,14 +36,23 @@ export default function UpdateOrder({ navigation, route }) {
         let tempdata = await orderDetails(currentRequestId);
         console.log(tempdata);
         setOrderData(tempdata);
-        console.log("set the current order data");
       } catch (error) {
-        alert(error);
+        console.log(error);
+        alert(UNKNOWN_ERROR);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    console.log(
+      orderData?.status !== "WAREHOUSE" && orderData?.status !== "PICKED"
+    );
+    setBtnDisabled(
+      orderData?.status !== "WAREHOUSE" && orderData?.status !== "PICKED"
+    );
+  }, [orderData]);
 
   const dropNow = async () => {
     try {
@@ -50,7 +60,7 @@ export default function UpdateOrder({ navigation, route }) {
       console.log(res);
       navigation.navigate("EtaPage", { requestId: currentRequestId });
     } catch (error) {
-      alert("Something went wrong");
+      alert(UNKNOWN_ERROR);
     }
   };
   const updateDrop = () => {
@@ -59,7 +69,6 @@ export default function UpdateOrder({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar animated style="auto" />
       <View style={styles.titleContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
@@ -84,15 +93,17 @@ export default function UpdateOrder({ navigation, route }) {
       <View style={styles.bottomContainer}>
         <Button
           size={60}
-          theme="primary"
+          theme={btnDisabled ? "disabled" : "primary"}
           label={"Update Drop Location"}
           onPress={updateDrop}
+          disabled={btnDisabled}
         />
         <Button
           size={60}
-          theme="primary"
+          theme={btnDisabled ? "disabled" : "primary"}
           label={"Drop Now"}
           onPress={dropNow}
+          disabled={btnDisabled}
         />
       </View>
     </SafeAreaView>

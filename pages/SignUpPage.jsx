@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
-import { StatusBar } from "expo-status-bar";
 // firebase authentication
 import auth from "@react-native-firebase/auth";
 // custom comps
@@ -12,6 +11,15 @@ import {
   validatePassword,
 } from "../utils/ValidationUtils";
 import { getFontSize } from "../utils/FontScaling";
+import {
+  EMAIL_EXISTS,
+  INVALID_EMAIL,
+  INVALID_MOBILE,
+  MISSING_FIELDS,
+  PASSWORD_MISMATCH,
+  PASSWORD_PATTERN_WRONG,
+  UNKNOWN_ERROR,
+} from "../constants/ErrorMessages";
 
 export default function SignUpPage({ navigation }) {
   const [name, setName] = useState("");
@@ -28,12 +36,14 @@ export default function SignUpPage({ navigation }) {
       if (validateForm()) {
         const res = await auth().createUserWithEmailAndPassword(email, pass1);
         await auth().currentUser.updateProfile({ displayName: name });
-        alert(auth().currentUser.email);
         navigation.navigate("VerifyPhone", { email, mobile, name, lastName });
       }
     } catch (error) {
-      alert(error);
-      console.log(error);
+      if (error.code == "auth/email-already-in-use") {
+        alert(EMAIL_EXISTS);
+      } else {
+        alert(UNKNOWN_ERROR);
+      }
     } finally {
       setLoading(false);
     }
@@ -41,21 +51,19 @@ export default function SignUpPage({ navigation }) {
 
   const validateForm = () => {
     if (!name || !mobile || !email || !pass1 || !pass2) {
-      alert("All fields are required");
+      alert(MISSING_FIELDS);
       return false;
     } else if (pass1 !== pass2) {
-      alert("Passwords Not Matching");
+      alert(PASSWORD_MISMATCH);
       return false;
     } else if (!validateEmail(email)) {
-      alert("Invalid Email");
+      alert(INVALID_EMAIL);
       return false;
     } else if (!validatePassword(pass1)) {
-      alert(
-        "Password must contain 1 UpperCase, 1 Lowecase, 1 Digit, 1 Special character and must have min length of 8"
-      );
+      alert(PASSWORD_PATTERN_WRONG);
       return false;
     } else if (!validateMobileNumber(mobile)) {
-      alert("Invalid Mobile Number");
+      alert(INVALID_MOBILE);
       return false;
     }
     return true;
@@ -63,7 +71,6 @@ export default function SignUpPage({ navigation }) {
 
   return (
     <>
-      <StatusBar animated style="auto" />
       <View style={styles.signupContainer}>
         <View style={styles.messageContainer}>
           <Text style={styles.heading}>Hi!</Text>

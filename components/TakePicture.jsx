@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
-import { Camera } from "expo-camera";
+import { Camera, ImageType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -30,9 +30,10 @@ export default function TakePicture({ photo, setPhoto, pictureSaved }) {
   // click picture handler
   const clickPicture = async () => {
     let options = {
-      quality: 1,
+      quality: 0,
       base64: true,
       exif: false,
+      imageType: ImageType.jpg,
     };
     let newPhoto = await camRef.current.takePictureAsync(options);
     setPhoto(newPhoto);
@@ -44,11 +45,11 @@ export default function TakePicture({ photo, setPhoto, pictureSaved }) {
       setPhoto(null);
     };
 
-    const savePicture = () => {
+    const savePicture = async () => {
+      await pictureSaved();
       MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
         setPhoto(undefined);
       });
-      pictureSaved();
     };
 
     return (

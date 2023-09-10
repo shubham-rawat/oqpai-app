@@ -1,20 +1,38 @@
-import { useState } from "react";
-import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+  PermissionsAndroid,
+} from "react-native";
 // firebase authentication
 import auth from "@react-native-firebase/auth";
+// firebase messaging
+import messaging from "@react-native-firebase/messaging";
 // redux
-import { useDispatch } from "react-redux";
-import { setUserData } from "../store/userDataSlice";
-import { StatusBar } from "expo-status-bar";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken, setUserData } from "../store/userDataSlice";
 // custom comps
 import Button from "../components/Button";
 import Seperator from "../components/Seperator";
 import CustomModal from "../components/CustomModal";
 import TextField from "../components/TextField";
 import ForgotPassword from "./ForgotPassword";
-import { getFontSize } from "../utils/FontScaling";
 import { saveFcmToken } from "../apis/userApi";
-import { getValueFor } from "../utils/SecureDataStoreUtils";
+import { getFontSize } from "../utils/FontScaling";
+import { saveValue } from "../utils/SecureDataStoreUtils";
+import {
+  LOGGED_IN_VALUE,
+  LOGIN_STORE_KEY,
+  USEREMAIL_STORE_KEY,
+  USERMOBILE_STORE_KEY,
+  USERNAME_STORE_KEY,
+} from "../constants/AllConstants";
+import {
+  INVALID_CREDENTIALS,
+  MISSING_FIELDS,
+} from "../constants/ErrorMessages";
 
 export default function LoginPage({ navigation }) {
   const dispatch = useDispatch();
@@ -23,27 +41,63 @@ export default function LoginPage({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [forgot, setForgot] = useState(false);
+  const { fcmToken } = useSelector((state) => state.userData);
 
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log("Authorization status:", authStatus);
+    }
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    );
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+    );
+  };
+
+  useEffect(() => {
+    if (requestUserPermission()) {
+      messaging()
+        .getToken()
+        .then((token) => {
+          dispatch(setToken({ fcmToken: token }));
+        })
+        .catch((reason) => console.log(reason));
+    } else {
+      console.log("Failed to get token");
+    }
+  }, []);
+
+  // function to handle user login
   const loginHandler = async () => {
     if (!email || !password) {
-      alert("Please provide the credentials");
+      alert(MISSING_FIELDS);
       return;
     }
     try {
       setLoading(true);
       const res = await auth().signInWithEmailAndPassword(email, password);
-      console.log("Saving FCM");
-      const msg = await saveFcmToken(email, await getValueFor("fcmToken"));
-      console.log(msg);
+      await saveValue(LOGIN_STORE_KEY, LOGGED_IN_VALUE);
+      await saveValue(USEREMAIL_STORE_KEY, email);
+      await saveValue(USERNAME_STORE_KEY, res.user.displayName);
+      await saveValue(USERMOBILE_STORE_KEY, res.user.phoneNumber);
+      await saveFcmToken(email, fcmToken);
       dispatch(
         setUserData({
           email,
           name: res.user.displayName,
           mobile: res.user.phoneNumber,
+          isLoggedIn: LOGGED_IN_VALUE,
         })
       );
     } catch (error) {
-      alert("Invalid Email or Password");
+      console.error("", error);
+      alert(INVALID_CREDENTIALS);
       setEmail("");
       setPassword("");
     } finally {
@@ -57,7 +111,6 @@ export default function LoginPage({ navigation }) {
 
   return (
     <>
-      <StatusBar animated style="auto" />
       <View style={styles.loginContainer}>
         <View style={styles.messageContainer}>
           <Text style={styles.heading}>Welcome!</Text>
@@ -104,7 +157,7 @@ export default function LoginPage({ navigation }) {
           Dont have an account?
           <Text
             style={{ color: "#0B6EFD" }}
-            onPress={() => navigation.navigate("SignupPage")}
+            onPress={() => navigation.navigate("SignUpPage")}
           >
             {" "}
             Sign Up

@@ -137,7 +137,7 @@ export function BillingComponent({ cost, tax }) {
   );
 }
 
-export function DriverDetails() {
+export function DriverDetails({ name }) {
   return (
     <View style={styles.sectionContainer}>
       <Text style={[styles.sectionHeading, { paddingBottom: 10 }]}>
@@ -146,12 +146,12 @@ export function DriverDetails() {
       <View style={styles.textSection}>
         <View>
           <Text style={styles.label}>Driver Name</Text>
-          <Text style={styles.labelData}>Saurav Shah</Text>
+          <Text style={styles.labelData}>{name}</Text>
         </View>
-        <View>
+        {/* <View>
           <Text style={styles.label}>Mobile Number</Text>
           <Text style={styles.labelData}>+91 9865646365</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );

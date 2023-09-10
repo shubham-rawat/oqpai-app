@@ -10,3 +10,7 @@ export async function saveValue(key, value) {
 export async function getValueFor(key) {
   return await SecureStore.getItemAsync(key);
 }
+
+export async function removeKey(key) {
+  await SecureStore.deleteItemAsync(key);
+}
