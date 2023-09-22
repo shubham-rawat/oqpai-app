@@ -57,21 +57,6 @@ export async function saveFcmToken(email, token) {
 
 //
 export async function createRequest(orderRequest) {
-  // const {
-  //   username,
-  //   pickup_text_address,
-  //   destination_text_address,
-  //   pickup_latitude,
-  //   pickup_longitude,
-  //   destination_latitude,
-  //   destination_longitude,
-  //   destination_date,
-  //   destination_time,
-  //   image,
-  //   number_of_bags,
-  //   destination_changed = false,
-  //   requested_dropoff = false,
-  // } = orderRequest;
   try {
     const response = await FORM_API.post("/users/create_request", orderRequest);
     return response.data;

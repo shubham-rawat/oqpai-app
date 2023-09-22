@@ -34,7 +34,7 @@ export default function CameraPage({ navigation }) {
       );
       requestdata.append(
         "pickup_date",
-        data.dateTime.pickup.toLocaleDateString("it-IT")
+        data.dateTime.pickup.toISOString().split("T")[0]
       );
       requestdata.append(
         "pickup_time",
@@ -42,7 +42,7 @@ export default function CameraPage({ navigation }) {
       );
       requestdata.append(
         "destination_date",
-        data.dateTime.drop.toLocaleDateString("it-IT")
+        data.dateTime.drop.toISOString().split("T")[0]
       );
       requestdata.append(
         "destination_time",
