@@ -16,11 +16,16 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow OQPAI App to access your photos.",
-        "NSPhotoLibraryAddUsageDescription": "Allow OQPAI App to save photos."
+        "NSPhotoLibraryAddUsageDescription": "Allow OQPAI App to save photos.",
+        "NSLocationWhenInUseUsageDescription": "Allow OQPAI App to access your location.",
+        "NSCameraUsageDescription": "Allow OQPAI App to access device camera.",
+        "NSMicrophoneUsageDescription": "Allow OQPAI App to access device microphone."
       },
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.shubhrawat.oqpaiapp",
+      "googleServicesFile": "./google-services.json"
     },
     "android": {
       "adaptiveIcon": {
